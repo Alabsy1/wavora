@@ -1,0 +1,88 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String   @default("Admin")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SiteConfig {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Trip {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  description String
+  location    String   @default("")
+  category    String   @default("sea")
+  tripType    String   @default("DAILY_CRUISE")
+  coverImage  String   @default("")
+  heroVideo   String   @default("")
+  gallery     String   @default("[]")
+  duration    String   @default("")
+  schedule    String   @default("")
+  priceFrom   Float    @default(0)
+  priceNote   String   @default("")
+  tags        String   @default("[]")
+  inclusions  String   @default("[]")
+  itinerary   String   @default("[]")
+  featured    Boolean  @default(false)
+  visible     Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Experience {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  description String
+  location    String   @default("")
+  category    String   @default("experiences")
+  coverImage  String   @default("")
+  heroVideo   String   @default("")
+  gallery     String   @default("[]")
+  duration    String   @default("")
+  priceFrom   Float    @default(0)
+  priceNote   String   @default("")
+  tags        String   @default("[]")
+  featured    Boolean  @default(false)
+  visible     Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Inquiry {
+  id            String   @id @default(cuid())
+  fullName      String
+  whatsapp      String
+  date          String
+  adults        Int      @default(1)
+  kids          Int      @default(0)
+  notes         String   @default("")
+  tripType      String   @default("")
+  tripId        String   @default("")
+  tripTitle     String   @default("")
+  status        String   @default("pending")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}

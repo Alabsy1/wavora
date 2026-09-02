@@ -1,0 +1,102 @@
+/* Admin-specific dark mode overrides */
+.admin-dark {
+  color-scheme: dark;
+}
+
+.admin-dark body,
+.admin-dark {
+  --admin-bg: #0a0a0a;
+  --admin-bg-elevated: #141414;
+  --admin-bg-hover: #1a1a1a;
+  --admin-border: #262626;
+  --admin-text: #fafafa;
+  --admin-text-muted: #a1a1a1;
+}
+
+.admin-dark .bg-white {
+  background-color: #0a0a0a !important;
+}
+
+.admin-dark .bg-white\/80 {
+  background-color: rgba(10, 10, 10, 0.8) !important;
+}
+
+.admin-dark .text-neutral-900,
+.admin-dark .text-neutral-800 {
+  color: #fafafa !important;
+}
+
+.admin-dark .text-neutral-600 {
+  color: #a1a1a1 !important;
+}
+
+.admin-dark .text-neutral-500 {
+  color: #737373 !important;
+}
+
+.admin-dark .text-neutral-400 {
+  color: #525252 !important;
+}
+
+.admin-dark .border-neutral-200 {
+  border-color: #262626 !important;
+}
+
+.admin-dark .bg-neutral-50 {
+  background-color: #171717 !important;
+}
+
+.admin-dark .hover\:bg-neutral-50:hover {
+  background-color: #171717 !important;
+}
+
+.admin-dark .hover\:bg-white:hover {
+  background-color: #1a1a1a !important;
+}
+
+.admin-dark input,
+.admin-dark select,
+.admin-dark textarea {
+  background-color: #141414 !important;
+  border-color: #262626 !important;
+  color: #fafafa !important;
+}
+
+.admin-dark input::placeholder,
+.admin-dark textarea::placeholder {
+  color: #525252 !important;
+}
+
+.admin-dark input:focus,
+.admin-dark select:focus,
+.admin-dark textarea:focus {
+  border-color: #14b8a6 !important;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.15);
+}
+
+/* Data table dark mode */
+.admin-dark table {
+  color: #d4d4d4 !important;
+}
+
+.admin-dark thead {
+  background-color: #141414 !important;
+}
+
+.admin-dark tbody tr {
+  border-color: #262626 !important;
+}
+
+.admin-dark tbody tr:hover {
+  background-color: #171717 !important;
+}
+
+/* Toggle switch dark mode */
+.admin-dark .toggle-track {
+  background-color: #3f3f46;
+}
+
+.admin-dark .toggle-track.active {
+  background-color: #14b8a6;
+}
