@@ -3,13 +3,11 @@ import { prisma } from "@/lib/prisma";
 import { signToken } from "@/lib/auth";
 import bcrypt from "bcryptjs";
 
-const VALID_EMAIL = process.env.ADMIN_EMAIL ?? "alabsyabdelrhman@gmail.com";
-const VALID_PASSWORD = process.env.ADMIN_PASSWORD ?? "abdo.elwa@yahoo.com";
-const VALID_NAME = process.env.ADMIN_NAME ?? "Absy Abdelrhman";
-
 export async function POST(request: NextRequest) {
   try {
-    const { email, password } = await request.json();
+    const body = await request.json();
+    const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
+    const password = typeof body.password === "string" ? body.password : "";
 
     if (!email || !password) {
       return NextResponse.json(
@@ -18,23 +16,23 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const emailMatch = email.toLowerCase() === VALID_EMAIL.toLowerCase();
-    const passwordMatch = password === VALID_PASSWORD;
+    const admin = await prisma.admin.findUnique({ where: { email } });
 
-    if (!emailMatch || !passwordMatch) {
+    if (!admin) {
       return NextResponse.json(
-        { error: "Invalid credentials" },
+        { error: "Invalid email or password" },
         { status: 401 }
       );
     }
 
-    const hashedPassword = await bcrypt.hash(VALID_PASSWORD, 12);
+    const valid = await bcrypt.compare(password, admin.password);
 
-    const admin = await prisma.admin.upsert({
-      where: { email: VALID_EMAIL },
-      update: { password: hashedPassword, name: VALID_NAME },
-      create: { email: VALID_EMAIL, password: hashedPassword, name: VALID_NAME },
-    });
+    if (!valid) {
+      return NextResponse.json(
+        { error: "Invalid email or password" },
+        { status: 401 }
+      );
+    }
 
     const token = await signToken({
       id: admin.id,
