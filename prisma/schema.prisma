@@ -86,3 +86,101 @@ model Inquiry {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }
+
+model SeaPackage {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  description String
+  duration    String
+  boatType    String
+  maxGuests   Int      @default(15)
+  priceFrom   Float
+  inclusions  String   @default("[]")
+  exclusions  String   @default("[]")
+  timeline    String   @default("[]")
+  specs       String   @default("{}")
+  addOns      String   @default("[]")
+  gallery     String   @default("[]")
+  coverImage  String   @default("")
+  featured    Boolean  @default(false)
+  visible     Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model IslandDestination {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String
+  image       String   @default("")
+  isPopular   Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model PageContent {
+  id         String   @id @default(cuid())
+  page       String
+  section    String
+  key        String
+  value      String
+  type       String   @default("text")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([page, section, key])
+}
+
+model AddOn {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String   @default("")
+  price       Float
+  category    String   @default("sea")
+  visible     Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Stay {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  description String
+  location    String   @default("")
+  category    String   @default("hotel")
+  coverImage  String   @default("")
+  gallery     String   @default("[]")
+  priceFrom   Float    @default(0)
+  priceNote   String   @default("")
+  amenities   String   @default("[]")
+  tags        String   @default("[]")
+  featured    Boolean  @default(false)
+  visible     Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Spot {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  description String
+  location    String   @default("")
+  category    String   @default("spot")
+  coverImage  String   @default("")
+  gallery     String   @default("[]")
+  tags        String   @default("[]")
+  featured    Boolean  @default(false)
+  visible     Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

@@ -53,3 +53,24 @@ export async function getFeaturedTrips(limit = 6) {
     return [];
   }
 }
+
+export async function getSeaPackages() {
+  try {
+    return await prisma.seaPackage.findMany({
+      where: { visible: true },
+      orderBy: { order: "asc" },
+    });
+  } catch {
+    return [];
+  }
+}
+
+export async function getIslandDestinations() {
+  try {
+    return await prisma.islandDestination.findMany({
+      orderBy: { order: "asc" },
+    });
+  } catch {
+    return [];
+  }
+}

@@ -10,9 +10,10 @@ interface InquiryModalProps {
   tripType?: string;
   tripTitle?: string;
   tripId?: string;
+  summary?: string;
 }
 
-export function InquiryModal({ open, onClose, tripType, tripTitle, tripId }: InquiryModalProps) {
+export function InquiryModal({ open, onClose, tripType, tripTitle, tripId, summary }: InquiryModalProps) {
   const [form, setForm] = useState({
     fullName: "",
     whatsapp: "",
@@ -37,7 +38,13 @@ export function InquiryModal({ open, onClose, tripType, tripTitle, tripId }: Inq
       const res = await fetch("/api/inquiries", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, tripType, tripId, tripTitle }),
+        body: JSON.stringify({
+          ...form,
+          tripType,
+          tripId,
+          tripTitle,
+          notes: summary ? (form.notes ? `${summary}\n\n${form.notes}` : summary) : form.notes,
+        }),
       });
 
       const data = await res.json();
@@ -91,7 +98,12 @@ export function InquiryModal({ open, onClose, tripType, tripTitle, tripId }: Inq
               {tripType && !tripTitle && (
                 <p className="mt-1 text-sm text-teal-600 dark:text-teal-400 font-medium">{tripType.replace(/_/g, " ")}</p>
               )}
-              <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
+              {summary && (
+                <p className="mt-2 rounded-lg bg-teal-50 px-3 py-2 text-xs text-teal-700 dark:bg-teal-950/30 dark:text-teal-300">
+                  {summary}
+                </p>
+              )}
+              <p className="mt-2 text-xs text-neutral-500 dark:text-neutral-400">
                 Fill in the details and we&apos;ll connect via WhatsApp instantly.
               </p>
             </div>

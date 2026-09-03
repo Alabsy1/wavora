@@ -11,14 +11,54 @@ import {
   ChevronLeft,
   ChevronRight,
   Waves,
+  Anchor,
+  Mountain,
+  Building2,
+  UtensilsCrossed,
+  MessageSquare,
+  FileText,
+  Puzzle,
 } from "lucide-react";
 import { useState } from "react";
 
-const navItems = [
-  { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
-  { label: "Global Settings", href: "/admin/settings", icon: Settings },
-  { label: "Trips", href: "/admin/trips", icon: Map },
-  { label: "Experiences", href: "/admin/experiences", icon: Compass },
+interface NavItem {
+  label: string;
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+}
+
+const sections: { title: string; items: NavItem[] }[] = [
+  {
+    title: "Overview",
+    items: [
+      { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
+    ],
+  },
+  {
+    title: "Content Modules",
+    items: [
+      { label: "Sea Packages", href: "/admin/sea-packages", icon: Anchor },
+      { label: "Adventures", href: "/admin/adventures", icon: Mountain },
+      { label: "Stays & Resorts", href: "/admin/stays", icon: Building2 },
+      { label: "Spots & Eats", href: "/admin/spots-eats", icon: UtensilsCrossed },
+      { label: "Trips", href: "/admin/trips", icon: Map },
+      { label: "Experiences", href: "/admin/experiences", icon: Compass },
+    ],
+  },
+  {
+    title: "Operations",
+    items: [
+      { label: "Inquiries", href: "/admin/inquiries", icon: MessageSquare },
+    ],
+  },
+  {
+    title: "Configuration",
+    items: [
+      { label: "Page Content", href: "/admin/page-content", icon: FileText },
+      { label: "Add-ons", href: "/admin/addons", icon: Puzzle },
+      { label: "Global Settings", href: "/admin/settings", icon: Settings },
+    ],
+  },
 ];
 
 export function AdminSidebar() {
@@ -44,28 +84,39 @@ export function AdminSidebar() {
         )}
       </div>
 
-      <nav className="flex-1 space-y-1 px-3 py-4">
-        {navItems.map((item) => {
-          const isActive = pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href));
-          const Icon = item.icon;
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
-                collapsed && "justify-center px-2",
-                isActive
-                  ? "bg-teal-50 text-teal-700 dark:bg-teal-500/10 dark:text-teal-400"
-                  : "text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-900 dark:hover:text-white"
-              )}
-              title={collapsed ? item.label : undefined}
-            >
-              <Icon className={cn("h-5 w-5 shrink-0", isActive ? "text-teal-600 dark:text-teal-400" : "text-neutral-400 group-hover:text-neutral-600 dark:group-hover:text-neutral-300")} />
-              {!collapsed && <span>{item.label}</span>}
-            </Link>
-          );
-        })}
+      <nav className="flex-1 overflow-y-auto px-3 py-4">
+        {sections.map((section) => (
+          <div key={section.title} className="mb-4">
+            {!collapsed && (
+              <p className="mb-2 px-3 text-[0.625rem] font-bold uppercase tracking-[0.2em] text-neutral-400 dark:text-neutral-500">
+                {section.title}
+              </p>
+            )}
+            <div className="space-y-0.5">
+              {section.items.map((item) => {
+                const isActive = pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href));
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={cn(
+                      "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                      collapsed && "justify-center px-2",
+                      isActive
+                        ? "bg-teal-50 text-teal-700 dark:bg-teal-500/10 dark:text-teal-400"
+                        : "text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-900 dark:hover:text-white"
+                    )}
+                    title={collapsed ? item.label : undefined}
+                  >
+                    <Icon className={cn("h-5 w-5 shrink-0", isActive ? "text-teal-600 dark:text-teal-400" : "text-neutral-400 group-hover:text-neutral-600 dark:group-hover:text-neutral-300")} />
+                    {!collapsed && <span>{item.label}</span>}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        ))}
       </nav>
 
       <div className="border-t border-neutral-200 p-3 dark:border-neutral-800">
