@@ -33,7 +33,7 @@ export function SeaIslands({ destinations }: SeaIslandsProps) {
         </p>
 
         {/* Popular destinations — large cards */}
-        <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-10 grid gap-5 sm:mt-14 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {popular.map((dest) => (
             <article
               key={dest.id}
@@ -69,7 +69,7 @@ export function SeaIslands({ destinations }: SeaIslandsProps) {
 
         {/* Other destinations — compact row */}
         {others.length > 0 && (
-          <div className="mt-8 grid gap-4 sm:grid-cols-3">
+          <div className="mt-6 grid gap-3 sm:mt-8 sm:gap-4 sm:grid-cols-3">
             {others.map((dest) => (
               <article
                 key={dest.id}

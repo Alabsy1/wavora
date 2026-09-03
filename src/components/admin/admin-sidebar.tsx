@@ -18,8 +18,9 @@ import {
   MessageSquare,
   FileText,
   Puzzle,
+  X,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface NavItem {
   label: string;
@@ -61,22 +62,33 @@ const sections: { title: string; items: NavItem[] }[] = [
   },
 ];
 
-export function AdminSidebar() {
+interface AdminSidebarProps {
+  mobileOpen: boolean;
+  onMobileClose: () => void;
+}
+
+export function AdminSidebar({ mobileOpen, onMobileClose }: AdminSidebarProps) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
 
-  return (
-    <aside
-      className={cn(
-        "fixed left-0 top-0 z-40 flex h-full flex-col border-r border-neutral-200 bg-white transition-all duration-300 dark:border-neutral-800 dark:bg-neutral-950",
-        collapsed ? "w-[68px]" : "w-64"
-      )}
-    >
-      <div className={cn("flex h-16 items-center border-b border-neutral-200 dark:border-neutral-800", collapsed ? "justify-center px-2" : "gap-3 px-5")}>
-        <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-teal-500 to-teal-600">
-          <Waves className="size-5 text-white" />
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = "hidden";
+      return () => { document.body.style.overflow = ""; };
+    }
+  }, [mobileOpen]);
+
+  useEffect(() => {
+    onMobileClose();
+  }, [pathname, onMobileClose]);
+
+  const sidebarContent = (
+    <>
+      <div className={cn("flex h-14 items-center border-b border-neutral-200 dark:border-neutral-800", collapsed && !mobileOpen ? "justify-center px-2" : "gap-3 px-5")}>
+        <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-teal-500 to-teal-600">
+          <Waves className="size-4 text-white" />
         </div>
-        {!collapsed && (
+        {(!collapsed || mobileOpen) && (
           <div className="flex flex-col">
             <span className="text-sm font-bold tracking-wide text-neutral-900 dark:text-white">WAVORA</span>
             <span className="text-[10px] font-medium uppercase tracking-widest text-neutral-400 dark:text-neutral-500">Admin</span>
@@ -87,7 +99,7 @@ export function AdminSidebar() {
       <nav className="flex-1 overflow-y-auto px-3 py-4">
         {sections.map((section) => (
           <div key={section.title} className="mb-4">
-            {!collapsed && (
+            {(!collapsed || mobileOpen) && (
               <p className="mb-2 px-3 text-[0.625rem] font-bold uppercase tracking-[0.2em] text-neutral-400 dark:text-neutral-500">
                 {section.title}
               </p>
@@ -100,17 +112,18 @@ export function AdminSidebar() {
                   <Link
                     key={item.href}
                     href={item.href}
+                    onClick={onMobileClose}
                     className={cn(
                       "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
-                      collapsed && "justify-center px-2",
+                      collapsed && !mobileOpen && "justify-center px-2",
                       isActive
                         ? "bg-teal-50 text-teal-700 dark:bg-teal-500/10 dark:text-teal-400"
                         : "text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-900 dark:hover:text-white"
                     )}
-                    title={collapsed ? item.label : undefined}
+                    title={collapsed && !mobileOpen ? item.label : undefined}
                   >
                     <Icon className={cn("h-5 w-5 shrink-0", isActive ? "text-teal-600 dark:text-teal-400" : "text-neutral-400 group-hover:text-neutral-600 dark:group-hover:text-neutral-300")} />
-                    {!collapsed && <span>{item.label}</span>}
+                    {(!collapsed || mobileOpen) && <span>{item.label}</span>}
                   </Link>
                 );
               })}
@@ -122,12 +135,43 @@ export function AdminSidebar() {
       <div className="border-t border-neutral-200 p-3 dark:border-neutral-800">
         <button
           onClick={() => setCollapsed((c) => !c)}
-          className="flex w-full items-center justify-center gap-2 rounded-lg px-3 py-2 text-xs font-medium text-neutral-500 transition-colors hover:bg-neutral-50 hover:text-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-900 dark:hover:text-neutral-200"
+          className="hidden lg:flex w-full items-center justify-center gap-2 rounded-lg px-3 py-2 text-xs font-medium text-neutral-500 transition-colors hover:bg-neutral-50 hover:text-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-900 dark:hover:text-neutral-200"
         >
           {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
           {!collapsed && <span>Collapse</span>}
         </button>
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* Desktop sidebar */}
+      <aside
+        className={cn(
+          "fixed left-0 top-0 z-40 hidden h-full flex-col border-r border-neutral-200 bg-white transition-all duration-300 dark:border-neutral-800 dark:bg-neutral-950 lg:flex",
+          collapsed ? "w-[68px]" : "w-64"
+        )}
+      >
+        {sidebarContent}
+      </aside>
+
+      {/* Mobile overlay */}
+      {mobileOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onMobileClose} />
+          <aside className="absolute left-0 top-0 flex h-full w-72 flex-col border-r border-neutral-200 bg-white shadow-2xl dark:border-neutral-800 dark:bg-neutral-950">
+            <button
+              onClick={onMobileClose}
+              className="absolute right-3 top-3 z-10 inline-flex size-8 items-center justify-center rounded-lg text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800"
+              aria-label="Close sidebar"
+            >
+              <X className="h-4 w-4" />
+            </button>
+            {sidebarContent}
+          </aside>
+        </div>
+      )}
+    </>
   );
 }

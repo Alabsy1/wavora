@@ -112,33 +112,33 @@ export function SeaCustomizer({ packages, destinations, onBook }: SeaCustomizerP
         </p>
 
         {/* Step indicators */}
-        <div className="mt-12 flex flex-wrap items-center gap-3">
+        <div className="mt-8 grid grid-cols-4 gap-2 sm:mt-12 sm:flex sm:flex-wrap sm:items-center sm:gap-3">
           {([1, 2, 3, 4] as const).map((s) => (
             <button
               key={s}
               type="button"
               onClick={() => setStep(s)}
               className={cn(
-                "flex items-center gap-2 rounded-full px-4 py-2 text-[0.6875rem] font-bold uppercase tracking-[0.2em] transition-all duration-300",
+                "flex items-center justify-center gap-1.5 rounded-full px-2 py-2.5 text-[0.625rem] font-bold uppercase tracking-[0.15em] transition-all duration-300 sm:justify-start sm:px-4 sm:py-2 sm:text-[0.6875rem] sm:tracking-[0.2em]",
                 step === s
                   ? "bg-pill text-pill-fg"
                   : "bg-section-soft text-section-fg/40 hover:text-section-fg/70",
               )}
             >
               <span className={cn(
-                "flex size-5 items-center justify-center rounded-full text-[0.5625rem] font-extrabold",
+                "flex size-5 shrink-0 items-center justify-center rounded-full text-[0.5625rem] font-extrabold",
                 step === s ? "bg-turquoise text-white" : "bg-section-fg/10 text-section-fg/50",
               )}>
                 {s}
               </span>
-              {s === 1 ? "Package" : s === 2 ? "Duration" : s === 3 ? "Islands" : "Extras"}
+              <span className="hidden sm:inline">{s === 1 ? "Package" : s === 2 ? "Duration" : s === 3 ? "Islands" : "Extras"}</span>
             </button>
           ))}
         </div>
 
-        <div className="mt-10 grid gap-8 lg:grid-cols-12 lg:gap-12">
+        <div className="mt-8 grid gap-8 sm:mt-10 lg:grid-cols-12 lg:gap-12">
           {/* Left: configuration */}
-          <div className="lg:col-span-7">
+          <div className="order-2 lg:order-1 lg:col-span-7">
             {/* Step 1: Package selection */}
             {step === 1 && (
               <div className="grid gap-4 sm:grid-cols-2">
@@ -356,8 +356,8 @@ export function SeaCustomizer({ packages, destinations, onBook }: SeaCustomizerP
           </div>
 
           {/* Right: live summary */}
-          <div className="lg:col-span-5">
-            <div className="sticky top-24 rounded-[1.5rem] bg-page p-6 shadow-[0_4px_30px_-8px_rgba(0,0,0,0.1)] sm:p-8">
+          <div className="order-1 lg:order-2 lg:col-span-5">
+            <div className="sticky top-24 rounded-[1.5rem] bg-page p-5 shadow-[0_4px_30px_-8px_rgba(0,0,0,0.1)] sm:p-6 sm:p-8">
               <h3 className="text-lg font-extrabold uppercase tracking-tight text-fg">
                 Your Sea Day
               </h3>
@@ -429,7 +429,7 @@ export function SeaCustomizer({ packages, destinations, onBook }: SeaCustomizerP
                 type="button"
                 onClick={handleBook}
                 disabled={!pkg}
-                className="mt-6 flex w-full items-center justify-center gap-2.5 rounded-xl bg-gradient-to-r from-turquoise to-turquoise/80 py-3.5 text-sm font-bold uppercase tracking-[0.15em] text-white shadow-lg shadow-turquoise/20 transition-all duration-300 hover:from-turquoise hover:to-turquoise hover:shadow-xl hover:shadow-turquoise/30 disabled:opacity-50"
+                className="mt-6 flex w-full items-center justify-center gap-2.5 rounded-xl bg-gradient-to-r from-turquoise to-turquoise/80 py-3.5 text-sm font-bold uppercase tracking-[0.15em] text-white shadow-lg shadow-turquoise/20 transition-all duration-300 hover:from-turquoise hover:to-turquoise hover:shadow-xl hover:shadow-turquoise/30 disabled:opacity-50 min-h-[48px]"
               >
                 <Send className="size-4" />
                 Book via WhatsApp

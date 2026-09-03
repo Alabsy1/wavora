@@ -96,7 +96,7 @@ export default function RootLayout({
       <head>
         <ThemeScript />
       </head>
-      <body className="min-h-full flex flex-col bg-page text-fg font-sans">
+      <body className="min-h-full flex flex-col bg-page text-fg font-sans overflow-x-hidden">
         <ThemeProvider>
           <SmoothScroll>
             <a

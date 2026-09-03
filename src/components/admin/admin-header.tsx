@@ -2,9 +2,13 @@
 
 import { useRouter } from "next/navigation";
 import { useAdminTheme } from "@/components/admin/admin-theme-provider";
-import { Moon, Sun, LogOut } from "lucide-react";
+import { Moon, Sun, LogOut, Menu } from "lucide-react";
 
-export function AdminHeader() {
+interface AdminHeaderProps {
+  onMenuToggle?: () => void;
+}
+
+export function AdminHeader({ onMenuToggle }: AdminHeaderProps) {
   const { theme, toggleTheme } = useAdminTheme();
   const router = useRouter();
 
@@ -15,9 +19,16 @@ export function AdminHeader() {
   }
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-neutral-200 bg-white/80 px-6 backdrop-blur-md dark:border-neutral-800 dark:bg-neutral-950/80">
+    <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-neutral-200 bg-white/80 px-4 backdrop-blur-md dark:border-neutral-800 dark:bg-neutral-950/80 sm:h-16 sm:px-6">
+      <button
+        onClick={onMenuToggle}
+        className="inline-flex size-9 items-center justify-center rounded-lg border border-neutral-200 text-neutral-500 transition-colors hover:bg-neutral-50 hover:text-neutral-700 dark:border-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-800 lg:hidden"
+        aria-label="Toggle menu"
+      >
+        <Menu className="h-5 w-5" />
+      </button>
       <div />
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 sm:gap-3">
         <button
           onClick={toggleTheme}
           className="inline-flex size-9 items-center justify-center rounded-lg border border-neutral-200 text-neutral-500 transition-colors hover:bg-neutral-50 hover:text-neutral-700 dark:border-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-white"

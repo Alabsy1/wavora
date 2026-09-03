@@ -81,11 +81,12 @@ export function SeaWaysIndex({ onBookThisStyle }: SeaWaysIndexProps) {
                     onClick={() => {
                       setTouched(true);
                       setActive(i);
+                      openDetail(i);
                     }}
                     onBlur={handleBlur}
                     aria-pressed={isActive}
                     className={cn(
-                      "group relative flex min-w-0 items-center gap-5 border-t border-fg/10 py-4 text-left outline-offset-4 transition-all duration-500 ease-out sm:gap-7 lg:py-5",
+                      "group relative flex min-w-0 items-center gap-3 border-t border-fg/10 py-3.5 text-left outline-offset-4 transition-all duration-500 ease-out sm:gap-5 lg:gap-7 lg:py-5",
                       quiet ? "opacity-35 hover:opacity-70" : "opacity-100",
                     )}
                   >
@@ -99,7 +100,7 @@ export function SeaWaysIndex({ onBookThisStyle }: SeaWaysIndexProps) {
                     </span>
                     <span
                       className={cn(
-                        "min-w-0 text-3xl font-extrabold uppercase leading-none tracking-tight transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] sm:text-4xl lg:text-5xl",
+                        "min-w-0 text-2xl font-extrabold uppercase leading-none tracking-tight transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] sm:text-3xl lg:text-5xl",
                         isActive
                           ? "translate-x-2 text-fg"
                           : "translate-x-0 text-fg",
