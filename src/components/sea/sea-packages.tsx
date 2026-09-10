@@ -3,6 +3,8 @@
 import Image from "next/image";
 import { Clock, Users, Check, ArrowUpRight, Eye } from "lucide-react";
 import { cn } from "@/lib/cn";
+import { AdminEditOverlay } from "@/components/admin/admin-edit-overlay";
+import { EDIT_CONFIGS } from "@/lib/edit-configs";
 import type { SeaPackage } from "@prisma/client";
 
 interface SeaPackagesProps {
@@ -39,13 +41,28 @@ export function SeaPackages({ packages, onSelect, onViewProgram }: SeaPackagesPr
             })();
 
             return (
-              <article
+              <AdminEditOverlay
                 key={pkg.id}
-                className={cn(
-                  "group relative flex flex-col overflow-hidden rounded-[1.5rem] bg-page transition-shadow duration-500",
-                  "shadow-[0_2px_20px_-4px_rgba(0,0,0,0.08)] hover:shadow-[0_8px_40px_-8px_rgba(0,0,0,0.14)]",
-                )}
+                model="SeaPackage"
+                id={pkg.id}
+                fields={EDIT_CONFIGS.SeaPackage.fields}
+                values={{
+                  title: pkg.title,
+                  description: pkg.description,
+                  priceFrom: pkg.priceFrom,
+                  coverImage: pkg.coverImage,
+                  duration: pkg.duration,
+                  boatType: pkg.boatType,
+                  maxGuests: pkg.maxGuests,
+                }}
+                label={pkg.title}
               >
+                <article
+                  className={cn(
+                    "group relative flex flex-col overflow-hidden rounded-[1.5rem] bg-page transition-shadow duration-500",
+                    "shadow-[0_2px_20px_-4px_rgba(0,0,0,0.08)] hover:shadow-[0_8px_40px_-8px_rgba(0,0,0,0.14)]",
+                  )}
+                >
                 <div className="relative aspect-[16/10] overflow-hidden">
                   <Image
                     src={pkg.coverImage || "/images/speedboat/speedboat-frame-1.jpg"}
@@ -123,6 +140,7 @@ export function SeaPackages({ packages, onSelect, onViewProgram }: SeaPackagesPr
                   </div>
                 </div>
               </article>
+              </AdminEditOverlay>
             );
           })}
         </div>

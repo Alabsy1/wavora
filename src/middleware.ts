@@ -2,7 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "@/lib/auth";
 
 const PUBLIC_ADMIN_ROUTES = ["/admin/login"];
-const PUBLIC_ADMIN_API_ROUTES = ["/api/admin/auth/login", "/api/admin/auth/check", "/api/site-flags"];
+const PUBLIC_ADMIN_API_ROUTES = [
+  "/api/admin/auth/login",
+  "/api/admin/auth/check",
+  "/api/admin/inline-edit",
+  "/api/auth/me",
+  "/api/site-flags",
+];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
