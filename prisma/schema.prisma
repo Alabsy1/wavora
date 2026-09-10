@@ -168,6 +168,17 @@ model Stay {
   updatedAt   DateTime @updatedAt
 }
 
+model ActivityLog {
+  id        String   @id @default(cuid())
+  action    String
+  model     String
+  itemId    String   @default("")
+  itemName  String   @default("")
+  adminEmail String  @default("")
+  details   String   @default("")
+  createdAt DateTime @default(now())
+}
+
 model Spot {
   id          String   @id @default(cuid())
   title       String

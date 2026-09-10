@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getSession } from "@/lib/auth";
 
 const JSON_FIELDS: Record<string, string[]> = {
   SeaPackage: ["inclusions", "exclusions", "timeline", "specs", "addOns", "gallery"],
@@ -105,6 +106,21 @@ export async function PATCH(request: NextRequest) {
       where: { id },
       data: updateData,
     });
+
+    const session = await getSession().catch(() => null);
+    const fieldNames = Object.keys(data).join(", ");
+    const itemName = existing.title ?? existing.name ?? existing.id ?? id;
+
+    prisma.activityLog.create({
+      data: {
+        action: "edit",
+        model,
+        itemId: id,
+        itemName: String(itemName),
+        adminEmail: session?.email ?? "unknown",
+        details: `Updated ${fieldNames} on ${model}`,
+      },
+    }).catch(() => {});
 
     return NextResponse.json({ success: true, record: updated });
   } catch (error) {
