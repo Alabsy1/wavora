@@ -1,4 +1,5 @@
-import type { Metadata } from "next";
+"use client";
+
 import { PageHero } from "@/components/page-hero";
 import { SectionHeading } from "@/components/section-heading";
 import { ImageCard } from "@/components/image-card";
@@ -6,13 +7,8 @@ import { CtaSection } from "@/components/cta-section";
 import { Marquee } from "@/components/marquee";
 import { StaggerGroup, StaggerItem } from "@/components/reveal";
 import { eats } from "@/data/eats";
-
-export const metadata: Metadata = {
-  title: "Eats — Restaurants & Cafés in Hurghada",
-  alternates: { canonical: "/eats" },
-  description:
-    "Restaurants, cafés, beach tables and late-night spots in Hurghada — where the locals actually eat, recommended by WAVORA.",
-};
+import { AdminEditOverlay } from "@/components/admin/admin-edit-overlay";
+import { EDIT_CONFIGS } from "@/lib/edit-configs";
 
 export default function EatsPage() {
   return (
@@ -35,16 +31,29 @@ export default function EatsPage() {
         <StaggerGroup className="mt-12 grid grid-cols-1 gap-x-7 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
           {eats.map((eat, i) => (
             <StaggerItem key={eat.id}>
-              <ImageCard
-                href={`/eat/${eat.id}`}
-                image={eat.images[0]}
-                alt={eat.title}
-                tag={eat.type}
-                title={eat.title}
-                location={eat.location}
-                aspect="square"
-                priority={i < 3}
-              />
+              <AdminEditOverlay
+                model="Spot"
+                id={eat.id}
+                fields={EDIT_CONFIGS.Spot.fields}
+                values={{
+                  title: eat.title,
+                  description: eat.description,
+                  coverImage: eat.images[0],
+                  location: eat.location,
+                }}
+                label={eat.title}
+              >
+                <ImageCard
+                  href={`/eat/${eat.id}`}
+                  image={eat.images[0]}
+                  alt={eat.title}
+                  tag={eat.type}
+                  title={eat.title}
+                  location={eat.location}
+                  aspect="square"
+                  priority={i < 3}
+                />
+              </AdminEditOverlay>
             </StaggerItem>
           ))}
         </StaggerGroup>

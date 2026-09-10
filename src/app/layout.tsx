@@ -6,6 +6,8 @@ import { FooterSlot } from "@/components/footer-slot";
 import { ThemeProvider, ThemeScript } from "@/components/theme-provider";
 import { siteConfig } from "@/data/site";
 import { SmoothScroll } from "@/components/smooth-scroll";
+import { AdminEditProvider } from "@/components/admin/admin-edit-provider";
+import { AdminControlBar } from "@/components/admin/admin-control-bar";
 
 const manrope = Manrope({
   variable: "--font-manrope",
@@ -97,42 +99,45 @@ export default function RootLayout({
         <ThemeScript />
       </head>
       <body className="min-h-full flex flex-col bg-page text-fg font-sans overflow-x-hidden">
-        <ThemeProvider>
-          <SmoothScroll>
-            <a
-              href="#main"
-              className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:rounded-full focus:bg-pill focus:px-5 focus:py-3 focus:text-sm focus:font-semibold focus:text-pill-fg"
-            >
-              Skip to content
-            </a>
-            <Navbar />
-            <main id="main" className="flex-1">
-              {children}
-            </main>
-            <FooterSlot />
-            <script
-              type="application/ld+json"
-              dangerouslySetInnerHTML={{
-                __html: JSON.stringify({
-                  "@context": "https://schema.org",
-                  "@type": "TravelAgency",
-                  name: siteConfig.name,
-                  url: siteConfig.url,
-                  slogan: siteConfig.tagline,
-                  description:
-                    "WAVORA is a travel & lifestyle brand in Hurghada, Red Sea, Egypt — sea trips, desert adventures, curated stays, hidden spots and places worth eating at.",
-                  address: {
-                    "@type": "PostalAddress",
-                    addressLocality: "Hurghada",
-                    addressRegion: "Red Sea Governorate",
-                    addressCountry: "EG",
-                  },
-                  areaServed: "Hurghada, Red Sea, Egypt",
-                }),
-              }}
-            />
-          </SmoothScroll>
-        </ThemeProvider>
+        <AdminEditProvider>
+          <ThemeProvider>
+            <SmoothScroll>
+              <a
+                href="#main"
+                className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:rounded-full focus:bg-pill focus:px-5 focus:py-3 focus:text-sm focus:font-semibold focus:text-pill-fg"
+              >
+                Skip to content
+              </a>
+              <Navbar />
+              <main id="main" className="flex-1">
+                {children}
+              </main>
+              <FooterSlot />
+              <AdminControlBar />
+              <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                  __html: JSON.stringify({
+                    "@context": "https://schema.org",
+                    "@type": "TravelAgency",
+                    name: siteConfig.name,
+                    url: siteConfig.url,
+                    slogan: siteConfig.tagline,
+                    description:
+                      "WAVORA is a travel & lifestyle brand in Hurghada, Red Sea, Egypt — sea trips, desert adventures, curated stays, hidden spots and places worth eating at.",
+                    address: {
+                      "@type": "PostalAddress",
+                      addressLocality: "Hurghada",
+                      addressRegion: "Red Sea Governorate",
+                      addressCountry: "EG",
+                    },
+                    areaServed: "Hurghada, Red Sea, Egypt",
+                  }),
+                }}
+              />
+            </SmoothScroll>
+          </ThemeProvider>
+        </AdminEditProvider>
       </body>
     </html>
   );

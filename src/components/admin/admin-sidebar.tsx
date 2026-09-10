@@ -18,6 +18,7 @@ import {
   MessageSquare,
   FileText,
   Puzzle,
+  Users,
   X,
 } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -57,6 +58,7 @@ const sections: { title: string; items: NavItem[] }[] = [
     items: [
       { label: "Page Content", href: "/admin/page-content", icon: FileText },
       { label: "Add-ons", href: "/admin/addons", icon: Puzzle },
+      { label: "Admin Users", href: "/admin/admins", icon: Users },
       { label: "Global Settings", href: "/admin/settings", icon: Settings },
     ],
   },

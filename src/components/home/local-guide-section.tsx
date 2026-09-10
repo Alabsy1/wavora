@@ -1,6 +1,10 @@
+"use client";
+
 import { SectionHeading } from "@/components/section-heading";
 import { ImageCard } from "@/components/image-card";
 import { Reveal } from "@/components/reveal";
+import { AdminEditOverlay } from "@/components/admin/admin-edit-overlay";
+import { EDIT_CONFIGS } from "@/lib/edit-configs";
 
 interface LocalGuideSectionProps {
   showSpots: boolean;
@@ -65,55 +69,107 @@ export function LocalGuideSection({ showSpots, showEats }: LocalGuideSectionProp
           <div className="grid grid-cols-2 gap-5 lg:gap-6">
             <div className="flex flex-col gap-5 lg:gap-6 lg:translate-y-8">
               {showEats && (
-                <ImageCard
-                  href="/eats"
-                  image="/images/eats-cafe.jpg"
-                  alt="A warm café interior in Hurghada"
-                  tag="Café"
-                  title="Boho Coffee Corner"
-                  location="Downtown"
-                  aspect="portrait"
-                  dark
-                  priority
-                />
+                <AdminEditOverlay
+                  model={EDIT_CONFIGS.Spot.model}
+                  id="boho-coffee-corner"
+                  fields={EDIT_CONFIGS.Spot.fields}
+                  values={{
+                    title: "Boho Coffee Corner",
+                    description: "A warm café interior in Hurghada",
+                    coverImage: "/images/eats-cafe.jpg",
+                    location: "Downtown",
+                  }}
+                  label="Boho Coffee Corner"
+                >
+                  <ImageCard
+                    href="/eats"
+                    image="/images/eats-cafe.jpg"
+                    alt="A warm café interior in Hurghada"
+                    tag="Café"
+                    title="Boho Coffee Corner"
+                    location="Downtown"
+                    aspect="portrait"
+                    dark
+                    priority
+                  />
+                </AdminEditOverlay>
               )}
               {showSpots && (
-                <ImageCard
-                  href="/spots"
-                  image="/images/sunset-silhouette.jpg"
-                  alt="Silhouette of a person watching a sunset"
-                  tag="Sunset"
-                  title="Sunset Point"
-                  location="Marina promenade"
-                  aspect="portrait"
-                  dark
-                />
+                <AdminEditOverlay
+                  model={EDIT_CONFIGS.Spot.model}
+                  id="sunset-point"
+                  fields={EDIT_CONFIGS.Spot.fields}
+                  values={{
+                    title: "Sunset Point",
+                    description: "Silhouette of a person watching a sunset",
+                    coverImage: "/images/sunset-silhouette.jpg",
+                    location: "Marina promenade",
+                  }}
+                  label="Sunset Point"
+                >
+                  <ImageCard
+                    href="/spots"
+                    image="/images/sunset-silhouette.jpg"
+                    alt="Silhouette of a person watching a sunset"
+                    tag="Sunset"
+                    title="Sunset Point"
+                    location="Marina promenade"
+                    aspect="portrait"
+                    dark
+                  />
+                </AdminEditOverlay>
               )}
             </div>
             <div className="flex flex-col gap-5 lg:gap-6">
               {showSpots && (
-                <ImageCard
-                  href="/spots"
-                  image="/images/sea-turtle-dive.jpg"
-                  alt="Sea turtle swimming above a coral reef"
-                  tag="Hidden gem"
-                  title="Hidden Coral Bay"
-                  location="South of Hurghada"
-                  aspect="portrait"
-                  dark
-                />
+                <AdminEditOverlay
+                  model={EDIT_CONFIGS.Spot.model}
+                  id="hidden-coral-bay"
+                  fields={EDIT_CONFIGS.Spot.fields}
+                  values={{
+                    title: "Hidden Coral Bay",
+                    description: "Sea turtle swimming above a coral reef",
+                    coverImage: "/images/sea-turtle-dive.jpg",
+                    location: "South of Hurghada",
+                  }}
+                  label="Hidden Coral Bay"
+                >
+                  <ImageCard
+                    href="/spots"
+                    image="/images/sea-turtle-dive.jpg"
+                    alt="Sea turtle swimming above a coral reef"
+                    tag="Hidden gem"
+                    title="Hidden Coral Bay"
+                    location="South of Hurghada"
+                    aspect="portrait"
+                    dark
+                  />
+                </AdminEditOverlay>
               )}
               {showEats && (
-                <ImageCard
-                  href="/eats"
-                  image="/images/eats-romantic.jpg"
-                  alt="Romantic rooftop dinner table by the sea"
-                  tag="Dinner"
-                  title="Rooftop Dinner Spot"
-                  location="Marina"
-                  aspect="portrait"
-                  dark
-                />
+                <AdminEditOverlay
+                  model={EDIT_CONFIGS.Spot.model}
+                  id="rooftop-dinner-spot"
+                  fields={EDIT_CONFIGS.Spot.fields}
+                  values={{
+                    title: "Rooftop Dinner Spot",
+                    description: "Romantic rooftop dinner table by the sea",
+                    coverImage: "/images/eats-romantic.jpg",
+                    location: "Marina",
+                  }}
+                  label="Rooftop Dinner Spot"
+                >
+                  <ImageCard
+                    href="/eats"
+                    image="/images/eats-romantic.jpg"
+                    alt="Romantic rooftop dinner table by the sea"
+                    tag="Dinner"
+                    title="Rooftop Dinner Spot"
+                    location="Marina"
+                    aspect="portrait"
+                    dark
+                  />
+                </AdminEditOverlay>
               )}
             </div>
           </div>

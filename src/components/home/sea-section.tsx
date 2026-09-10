@@ -1,7 +1,11 @@
+"use client";
+
 import { getExperiencesByCategory } from "@/data/experiences";
 import { SectionHeading } from "@/components/section-heading";
 import { HorizontalScroller } from "@/components/horizontal-scroller";
 import { ExperienceCard } from "@/components/experience-card";
+import { AdminEditOverlay } from "@/components/admin/admin-edit-overlay";
+import { EDIT_CONFIGS } from "@/lib/edit-configs";
 
 export function SeaSection() {
   const experiences = getExperiencesByCategory("sea");
@@ -28,11 +32,25 @@ export function SeaSection() {
               data-card
               className="w-[78%] shrink-0 snap-start sm:w-[360px] lg:w-[400px]"
             >
-              <ExperienceCard
-                experience={experience}
-                priority={i < 2}
-                dark
-              />
+              <AdminEditOverlay
+                model={EDIT_CONFIGS.Experience.model}
+                id={experience.id}
+                fields={EDIT_CONFIGS.Experience.fields}
+                values={{
+                  title: experience.title,
+                  description: experience.description,
+                  priceFrom: experience.priceFrom,
+                  coverImage: experience.images[0],
+                  location: experience.location,
+                }}
+                label={experience.title}
+              >
+                <ExperienceCard
+                  experience={experience}
+                  priority={i < 2}
+                  dark
+                />
+              </AdminEditOverlay>
             </div>
           ))}
         </HorizontalScroller>

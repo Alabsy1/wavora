@@ -1,4 +1,5 @@
-import type { Metadata } from "next";
+"use client";
+
 import { PageHero } from "@/components/page-hero";
 import { SectionHeading } from "@/components/section-heading";
 import { ExperienceCard } from "@/components/experience-card";
@@ -6,13 +7,8 @@ import { CtaSection } from "@/components/cta-section";
 import { Marquee } from "@/components/marquee";
 import { StaggerGroup, StaggerItem } from "@/components/reveal";
 import { getExperiencesByCategory } from "@/data/experiences";
-
-export const metadata: Metadata = {
-  title: "Adventures & Desert Safaris",
-  alternates: { canonical: "/adventures" },
-  description:
-    "Desert safaris, quad biking, mountain treks and stargazing nights around Hurghada — curated by WAVORA.",
-};
+import { AdminEditOverlay } from "@/components/admin/admin-edit-overlay";
+import { EDIT_CONFIGS } from "@/lib/edit-configs";
 
 export default function AdventuresPage() {
   const items = getExperiencesByCategory("adventure");
@@ -40,7 +36,21 @@ export default function AdventuresPage() {
         <StaggerGroup className="mt-12 grid grid-cols-1 gap-x-7 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((experience, i) => (
             <StaggerItem key={experience.id}>
-              <ExperienceCard experience={experience} priority={i < 3} />
+              <AdminEditOverlay
+                model="Experience"
+                id={experience.id}
+                fields={EDIT_CONFIGS.Experience.fields}
+                values={{
+                  title: experience.title,
+                  description: experience.description,
+                  priceFrom: experience.priceFrom,
+                  coverImage: experience.images[0],
+                  location: experience.location,
+                }}
+                label={experience.title}
+              >
+                <ExperienceCard experience={experience} priority={i < 3} />
+              </AdminEditOverlay>
             </StaggerItem>
           ))}
         </StaggerGroup>

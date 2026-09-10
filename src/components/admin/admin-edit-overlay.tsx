@@ -2,7 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 import { Pencil } from "lucide-react";
-import { useAdminAuth } from "@/hooks/use-admin-auth";
+import { useEditMode } from "./admin-edit-provider";
 import { InlineEditModal, type EditField } from "./inline-edit-modal";
 
 interface AdminEditOverlayProps {
@@ -24,10 +24,10 @@ export function AdminEditOverlay({
   children,
   onSaved,
 }: AdminEditOverlayProps) {
-  const { isAdmin, loading } = useAdminAuth();
+  const { isAdmin, editMode } = useEditMode();
   const [open, setOpen] = useState(false);
 
-  if (loading || !isAdmin) {
+  if (!isAdmin) {
     return <>{children}</>;
   }
 
@@ -40,7 +40,11 @@ export function AdminEditOverlay({
           e.stopPropagation();
           setOpen(true);
         }}
-        className="absolute -top-2 -right-2 z-30 flex size-8 items-center justify-center rounded-full bg-teal-500 text-white shadow-lg shadow-teal-500/30 opacity-0 group-hover/edit:opacity-100 focus-visible:opacity-100 transition-opacity duration-200 hover:bg-teal-600 hover:scale-110"
+        className={`absolute -top-2 -right-2 z-30 flex size-8 items-center justify-center rounded-full bg-teal-500 text-white shadow-lg shadow-teal-500/30 transition-all duration-200 hover:bg-teal-600 hover:scale-110 ${
+          editMode
+            ? "opacity-100"
+            : "opacity-0 group-hover/edit:opacity-100 focus-visible:opacity-100"
+        }`}
         aria-label={`Edit ${label ?? model}`}
       >
         <Pencil className="size-3.5" />
