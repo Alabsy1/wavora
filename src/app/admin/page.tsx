@@ -5,8 +5,9 @@ import Link from "next/link";
 import {
   Anchor, Mountain, Building2, UtensilsCrossed,
   MessageSquare, Map, Compass, ExternalLink,
-  RefreshCw, Clock, Users, Activity, Zap, Puzzle,
+  RefreshCw, Clock, Users, Activity, Zap, Puzzle, Pencil,
 } from "lucide-react";
+import { useEditMode } from "@/components/admin/admin-edit-provider";
 
 interface Stats {
   seaPackages: number;
@@ -72,6 +73,7 @@ function timeAgo(dateStr: string): string {
 }
 
 export default function AdminDashboardPage() {
+  const { editMode, toggleEditMode } = useEditMode();
   const [stats, setStats] = useState<Stats>({
     seaPackages: 0, adventures: 0, stays: 0, spots: 0,
     trips: 0, experiences: 0, addons: 0, inquiries: 0,
@@ -140,6 +142,28 @@ export default function AdminDashboardPage() {
           </p>
         </div>
         <div className="flex items-center gap-3">
+          <button
+            onClick={toggleEditMode}
+            className={`inline-flex items-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium transition-all ${
+              editMode
+                ? "border-teal-300 bg-teal-50 text-teal-700 dark:border-teal-600 dark:bg-teal-950/30 dark:text-teal-400"
+                : "border-neutral-200 bg-white text-neutral-700 hover:border-teal-300 hover:bg-teal-50 hover:text-teal-700 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:border-teal-600 dark:hover:bg-teal-950/30 dark:hover:text-teal-400"
+            }`}
+          >
+            <Pencil className="h-4 w-4" />
+            Edit Mode
+            <span
+              className={`relative inline-flex size-5 shrink-0 items-center rounded-full transition-colors duration-200 ${
+                editMode ? "bg-teal-600 dark:bg-teal-500" : "bg-neutral-300 dark:bg-neutral-600"
+              }`}
+            >
+              <span
+                className={`inline-block size-3.5 rounded-full bg-white shadow-sm transition-transform duration-200 ${
+                  editMode ? "translate-x-2" : "translate-x-0.5"
+                }`}
+              />
+            </span>
+          </button>
           <div className="hidden items-center gap-1.5 rounded-lg border border-neutral-200 bg-white px-3 py-2 text-xs text-neutral-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-400 sm:flex">
             <Users className="h-3.5 w-3.5" />
             {stats.admins} admin{stats.admins !== 1 ? "s" : ""}

@@ -7,7 +7,6 @@ import { ThemeProvider, ThemeScript } from "@/components/theme-provider";
 import { siteConfig } from "@/data/site";
 import { SmoothScroll } from "@/components/smooth-scroll";
 import { AdminEditProvider } from "@/components/admin/admin-edit-provider";
-import { AdminControlBar } from "@/components/admin/admin-control-bar";
 
 const manrope = Manrope({
   variable: "--font-manrope",
@@ -113,7 +112,6 @@ export default function RootLayout({
                 {children}
               </main>
               <FooterSlot />
-              <AdminControlBar />
               <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{

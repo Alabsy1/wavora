@@ -18,9 +18,9 @@ export function StaysSection() {
         description="Not a booking portal — a shortlist of places we'd actually stay, chosen for light, calm and character."
         link={{ label: "Browse all stays", href: "/stays" }}
       />
-      <StaggerGroup className="mt-12 grid grid-cols-1 gap-x-7 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+      <StaggerGroup className="mt-12 flex max-md:overflow-x-auto max-md:snap-x max-md:snap-mandatory max-md:gap-5 max-md:pb-4 md:grid md:grid-cols-2 md:gap-x-7 md:gap-y-10 lg:grid-cols-3">
         {featured.map((stay, i) => (
-          <StaggerItem key={stay.id}>
+          <StaggerItem key={stay.id} className="max-md:min-w-[280px] max-md:snap-start">
             <AdminEditOverlay
               model={EDIT_CONFIGS.Stay.model}
               id={stay.id}

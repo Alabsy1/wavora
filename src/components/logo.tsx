@@ -1,5 +1,5 @@
+import Image from "next/image";
 import { cn } from "@/lib/cn";
-import { WaveMark } from "@/components/logo-mark";
 
 interface LogoProps {
   variant?: "dark" | "light";
@@ -8,17 +8,22 @@ interface LogoProps {
 }
 
 export function Logo({ variant = "dark", className, href }: LogoProps) {
-  const color =
-    variant === "light"
-      ? "text-section-fg"
-      : "text-fg";
-
   const inner = (
-    <span className={cn("group inline-flex items-center gap-2.5", color)}>
-      <WaveMark className="h-[1.35em] w-auto transition-transform duration-500 ease-out group-hover:-translate-y-0.5" />
-      <span className="text-[1.05em] font-extrabold tracking-[0.22em]">
-        WAVORA
-      </span>
+    <span className="group inline-flex items-center">
+      <Image
+        src="/Neovorm-logo-transparent.png"
+        alt="WAVORA"
+        width={140}
+        height={32}
+        className={cn(
+          "h-8 w-auto object-contain transition-all duration-300",
+          variant === "light"
+            ? "brightness-0 invert"
+            : "dark:brightness-0 dark:invert",
+          className,
+        )}
+        priority
+      />
     </span>
   );
 
@@ -27,12 +32,12 @@ export function Logo({ variant = "dark", className, href }: LogoProps) {
       <a
         href={href}
         aria-label="WAVORA — home"
-        className={cn("inline-flex text-lg", className)}
+        className="inline-flex"
       >
         {inner}
       </a>
     );
   }
 
-  return <span className={cn("inline-flex text-lg", className)}>{inner}</span>;
+  return <span className="inline-flex">{inner}</span>;
 }
