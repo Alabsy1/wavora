@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { requireAdmin } from "@/lib/auth";
 
 export async function GET() {
   try {
+    await requireAdmin();
     const configs = await prisma.siteConfig.findMany();
     const flags: Record<string, string> = {};
     for (const c of configs) {
@@ -17,6 +19,7 @@ export async function GET() {
 
 export async function PUT(request: NextRequest) {
   try {
+    await requireAdmin();
     const body = await request.json();
     const updates: Record<string, string> = body;
 

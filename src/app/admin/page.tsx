@@ -89,7 +89,7 @@ export default function AdminDashboardPage() {
     try {
       const [statsRes, inqRes, actRes] = await Promise.all([
         fetch("/api/admin/stats").then((r) => r.json()).catch(() => null),
-        fetch("/api/admin/revalidate").then((r) => r.json()).catch(() => []),
+        fetch("/api/inquiries").then((r) => r.json()).catch(() => []),
         fetch("/api/admin/activity").then((r) => r.json()).catch(() => []),
       ]);
 

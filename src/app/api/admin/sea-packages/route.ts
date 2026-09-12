@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { requireAdmin } from "@/lib/auth";
 
 export async function GET() {
   try {
+    await requireAdmin();
     const packages = await prisma.seaPackage.findMany({ orderBy: { order: "asc" } });
     return NextResponse.json(packages);
   } catch {
@@ -12,6 +14,7 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
+    await requireAdmin();
     const body = await request.json();
     const {
       title, slug, description, duration, boatType, maxGuests, priceFrom,

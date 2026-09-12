@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { siteConfig } from "@/data/site";
+import { requireAdmin } from "@/lib/auth";
 
 export async function POST(request: NextRequest) {
   try {
@@ -50,6 +51,7 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   try {
+    await requireAdmin();
     const inquiries = await prisma.inquiry.findMany({ orderBy: { createdAt: "desc" } });
     return NextResponse.json(inquiries);
   } catch (error) {

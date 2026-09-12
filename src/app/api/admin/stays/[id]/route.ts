@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { requireAdmin } from "@/lib/auth";
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    await requireAdmin();
     const { id } = await params;
     const stay = await prisma.stay.findUnique({ where: { id } });
     if (!stay) return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -14,6 +16,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
 
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    await requireAdmin();
     const { id } = await params;
     const body = await request.json();
     const { title, slug, description, location, category, coverImage, gallery, priceFrom, priceNote, amenities, tags, featured, visible, order } = body;
@@ -47,6 +50,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
 export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    await requireAdmin();
     const { id } = await params;
     await prisma.stay.delete({ where: { id } });
     return NextResponse.json({ success: true });

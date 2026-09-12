@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { requireAdmin } from "@/lib/auth";
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    await requireAdmin();
     const { id } = await params;
     const addon = await prisma.addOn.findUnique({ where: { id } });
     if (!addon) return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -14,6 +16,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
 
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    await requireAdmin();
     const { id } = await params;
     const body = await request.json();
     const { name, slug, description, price, category, visible, order } = body;
@@ -40,6 +43,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
 export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    await requireAdmin();
     const { id } = await params;
     await prisma.addOn.delete({ where: { id } });
     return NextResponse.json({ success: true });

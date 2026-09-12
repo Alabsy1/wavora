@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { requireAdmin } from "@/lib/auth";
 
 export async function GET() {
   try {
+    await requireAdmin();
     const trips = await prisma.trip.findMany({ orderBy: { order: "asc" } });
     return NextResponse.json(trips);
   } catch (error) {
@@ -13,6 +15,7 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
+    await requireAdmin();
     const body = await request.json();
     const { title, slug, description, location, category, tripType, coverImage, heroVideo, gallery, duration, schedule, priceFrom, priceNote, tags, inclusions, itinerary, featured, visible, order } = body;
 

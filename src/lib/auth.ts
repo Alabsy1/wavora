@@ -1,9 +1,11 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 
-const secret = new TextEncoder().encode(
-  process.env.JWT_SECRET ?? "wavora-admin-secret-change-in-production-2024"
-);
+const rawSecret = process.env.JWT_SECRET;
+if (!rawSecret) {
+  throw new Error("JWT_SECRET environment variable is required but was not set.");
+}
+const secret = new TextEncoder().encode(rawSecret);
 
 export interface AdminPayload {
   id: string;

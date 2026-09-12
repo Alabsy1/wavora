@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { requireAdmin } from "@/lib/auth";
 
 export async function GET(request: NextRequest) {
   try {
+    await requireAdmin();
     const { searchParams } = new URL(request.url);
     const page = searchParams.get("page");
 
@@ -16,6 +18,7 @@ export async function GET(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
+    await requireAdmin();
     const body = await request.json();
     const { items } = body as { items: { page: string; section: string; key: string; value: string; type?: string }[] };
 

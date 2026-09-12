@@ -5,7 +5,6 @@ const PUBLIC_ADMIN_ROUTES = ["/admin/login"];
 const PUBLIC_ADMIN_API_ROUTES = [
   "/api/admin/auth/login",
   "/api/admin/auth/check",
-  "/api/admin/inline-edit",
   "/api/auth/me",
   "/api/site-flags",
 ];

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getSession } from "@/lib/auth";
+import { requireAdmin } from "@/lib/auth";
 
 const JSON_FIELDS: Record<string, string[]> = {
   SeaPackage: ["inclusions", "exclusions", "timeline", "specs", "addOns", "gallery"],
@@ -60,6 +60,7 @@ function getModel(modelName: string): PrismaModel | null {
 
 export async function PATCH(request: NextRequest) {
   try {
+    await requireAdmin();
     const { model, id, data } = await request.json();
 
     if (!model || !id || !data || typeof data !== "object") {
@@ -107,7 +108,7 @@ export async function PATCH(request: NextRequest) {
       data: updateData,
     });
 
-    const session = await getSession().catch(() => null);
+    const session = await requireAdmin().catch(() => null);
     const fieldNames = Object.keys(data).join(", ");
     const itemName = existing.title ?? existing.name ?? existing.id ?? id;
 

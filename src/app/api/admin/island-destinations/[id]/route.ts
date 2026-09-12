@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { requireAdmin } from "@/lib/auth";
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    await requireAdmin();
     const { id } = await params;
     const dest = await prisma.islandDestination.findUnique({ where: { id } });
     if (!dest) return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -14,6 +16,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
 
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    await requireAdmin();
     const { id } = await params;
     const body = await request.json();
     const { name, slug, description, image, isPopular, order } = body;
@@ -39,6 +42,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
 export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    await requireAdmin();
     const { id } = await params;
     await prisma.islandDestination.delete({ where: { id } });
     return NextResponse.json({ success: true });
