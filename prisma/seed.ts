@@ -502,6 +502,137 @@ async function main() {
     }
   }
 
+  // --- Adventure Trips ---
+  const adventureTrips = [
+    {
+      title: "Desert Safari & Quad Biking",
+      slug: "desert-safari-quad-biking",
+      description: "Full throttle over golden dunes, a stop at a Bedouin village, and the open desert as your playground. Includes quad bike ride, camel encounter, and Bedouin tea.",
+      location: "Hurghada Desert",
+      category: "adventure",
+      tripType: "DESERT_SAFARI",
+      coverImage: "/images/adv-desert-sunset.jpg",
+      heroVideo: "",
+      gallery: ["/images/adv-desert-sunset.jpg", "/images/adv-desert-night.jpg", "/images/adv-safari.jpg"],
+      duration: "4–5 hours",
+      schedule: "Daily at 14:00",
+      priceFrom: 35,
+      priceNote: "per person",
+      tags: ["Safari", "Quad", "Adrenaline", "Desert"],
+      inclusions: ["Quad bike", "Hotel transfer", "Bedouin tea", "Sunset stop", "Guide"],
+      itinerary: [
+        { time: "14:00", title: "Hotel Pickup", description: "Air-conditioned vehicle picks you up from your hotel." },
+        { time: "14:30", title: "Quad Bike Briefing", description: "Safety instructions and gear fitting." },
+        { time: "15:00", title: "Quad Ride", description: "Ride through desert trails and golden dunes." },
+        { time: "16:00", title: "Bedouin Village", description: "Visit a traditional village. Tea, bread, and culture." },
+        { time: "17:00", title: "Sunset Stop", description: "Watch the sun set over the desert from a dune top." },
+        { time: "18:00", title: "Return", description: "Drive back to your hotel." },
+      ],
+      featured: true,
+      visible: true,
+      order: 1,
+    },
+    {
+      title: "Stargazing Mountain Dinner",
+      slug: "stargazing-mountain-dinner",
+      description: "Drive into the Eastern Desert, dine under the stars on a mountain plateau, and see the Milky Way like never before. A quiet, unforgettable night.",
+      location: "Eastern Desert Mountains",
+      category: "adventure",
+      tripType: "ADVENTURE",
+      coverImage: "/images/adv-desert-night.jpg",
+      heroVideo: "",
+      gallery: ["/images/adv-desert-night.jpg", "/images/adv-desert-sunset.jpg"],
+      duration: "6 hours",
+      schedule: "Wed & Fri at 16:00",
+      priceFrom: 55,
+      priceNote: "per person",
+      tags: ["Stargazing", "Dinner", "Mountains", "Night"],
+      inclusions: ["4x4 transport", "Dinner", "Telescope", "Guide", "Blankets"],
+      itinerary: [
+        { time: "16:00", title: "Pickup", description: "Depart from Hurghada in a 4x4 vehicle." },
+        { time: "17:00", title: "Mountain Ascent", description: "Drive up to a scenic plateau with panoramic views." },
+        { time: "18:00", title: "Sunset", description: "Watch the sunset paint the desert in gold and rose." },
+        { time: "19:00", title: "Dinner", description: "Traditional Bedouin dinner under the open sky." },
+        { time: "20:30", title: "Stargazing", description: "Telescope viewing of planets, stars, and the Milky Way." },
+        { time: "22:00", title: "Return", description: "Drive back to Hurghada." },
+      ],
+      featured: true,
+      visible: true,
+      order: 2,
+    },
+    {
+      title: "Wadi Hammamat Historic Trail",
+      slug: "wadi-hammamat-trail",
+      description: "Walk through a ancient river valley carved into the Red Sea mountains. Petroglyphs, gold mines, and landscapes that time forgot.",
+      location: "Wadi Hammamat, Eastern Desert",
+      category: "adventure",
+      tripType: "ADVENTURE",
+      coverImage: "/images/adv-peak.jpg",
+      heroVideo: "",
+      gallery: ["/images/adv-peak.jpg", "/images/adv-misty-mountain.jpg", "/images/adv-mountain-lake.jpg"],
+      duration: "Full day",
+      schedule: "Thu & Sat at 07:00",
+      priceFrom: 65,
+      priceNote: "per person",
+      tags: ["Hiking", "History", "Mountains", "Nature"],
+      inclusions: ["4x4 transport", "Guide", "Lunch", "Water", "Entry permits"],
+      itinerary: [
+        { time: "07:00", title: "Early Pickup", description: "Depart from Hurghada before the heat builds." },
+        { time: "09:00", title: "Trail Start", description: "Begin the walk through the ancient wadi." },
+        { time: "10:30", title: "Petroglyphs", description: "See 4,000-year-old rock carvings on the canyon walls." },
+        { time: "12:00", title: "Valley Floor", description: "Open desert floor with mountain walls on both sides." },
+        { time: "13:00", title: "Lunch", description: "Picnic lunch in the shade of a rock formation." },
+        { time: "15:00", title: "Return Drive", description: "Drive back to Hurghada." },
+      ],
+      featured: false,
+      visible: true,
+      order: 3,
+    },
+    {
+      title: "Dune Buggy Sunset Tour",
+      slug: "dune-buggy-sunset-tour",
+      description: "Ride a dune buggy across the desert as the sun drops. Fast, loud, and the kind of freedom you can't buy in a city.",
+      location: "Hurghada Desert",
+      category: "adventure",
+      tripType: "ATV_ADVENTURE",
+      coverImage: "/images/adv-safari.jpg",
+      heroVideo: "",
+      gallery: ["/images/adv-safari.jpg", "/images/adv-desert-sunset.jpg"],
+      duration: "2–3 hours",
+      schedule: "Daily at 15:30",
+      priceFrom: 40,
+      priceNote: "per person",
+      tags: ["Buggy", "Sunset", "Adrenaline", "Desert"],
+      inclusions: ["Dune buggy", "Helmet", "Goggles", "Guide", "Water"],
+      itinerary: [
+        { time: "15:30", title: "Arrive & Brief", description: "Meet at the desert camp. Get your buggy and safety gear." },
+        { time: "16:00", title: "Ride Begins", description: "Drive through dunes, rocky trails, and open desert." },
+        { time: "17:00", title: "Sunset Stop", description: "Pull over on a high dune. Watch the sunset from the desert." },
+        { time: "17:30", title: "Photo Time", description: "Golden hour photos with the buggy and the dunes." },
+        { time: "18:00", title: "Return", description: "Drive back to camp. Transfer to hotel." },
+      ],
+      featured: true,
+      visible: true,
+      order: 4,
+    },
+  ];
+
+  for (const trip of adventureTrips) {
+    const data = {
+      ...trip,
+      gallery: JSON.stringify(trip.gallery),
+      tags: JSON.stringify(trip.tags),
+      inclusions: JSON.stringify(trip.inclusions),
+      itinerary: JSON.stringify(trip.itinerary),
+    };
+    const existing = await prisma.trip.findUnique({ where: { slug: trip.slug } });
+    if (existing) {
+      await prisma.trip.update({ where: { slug: trip.slug }, data });
+    } else {
+      await prisma.trip.create({ data });
+    }
+  }
+
   // --- AddOns ---
   const addOns = [
     { name: "GoPro Underwater Camera", slug: "gopro-camera", description: "4K underwater footage of your trip", price: 25, category: "equipment", visible: true, order: 1 },
@@ -521,7 +652,7 @@ async function main() {
     }
   }
 
-  console.log("Seed complete: admin, feature flags, sea packages, island destinations, stays, spots, and add-ons created.");
+  console.log("Seed complete: admin, feature flags, sea packages, island destinations, stays, spots, adventure trips, and add-ons created.");
 }
 
 main()

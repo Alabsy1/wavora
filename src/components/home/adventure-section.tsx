@@ -1,14 +1,19 @@
-"use client";
-
-import { getExperiencesByCategory } from "@/data/experiences";
+import { prisma } from "@/lib/prisma";
 import { SectionHeading } from "@/components/section-heading";
 import { EditorialTile } from "@/components/editorial-tile";
-import { Reveal } from "@/components/reveal";
 import { AdminEditOverlay } from "@/components/admin/admin-edit-overlay";
 import { EDIT_CONFIGS } from "@/lib/edit-configs";
 
-export function AdventureSection() {
-  const experiences = getExperiencesByCategory("adventure");
+export async function AdventureSection() {
+  const trips = await prisma.trip.findMany({
+    where: { visible: true, category: "adventure", featured: true },
+    orderBy: { order: "asc" },
+    take: 3,
+  });
+
+  if (trips.length === 0) return null;
+
+  const [first, second, third] = trips;
 
   return (
     <section
@@ -30,83 +35,87 @@ export function AdventureSection() {
       </div>
 
       <div className="container-w relative z-10 mt-12">
-        <Reveal>
-          <div className="grid auto-rows-[240px] grid-cols-1 gap-5 sm:auto-rows-[300px] sm:grid-cols-2 lg:grid-cols-12">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3">
+          {first && (
             <AdminEditOverlay
-              model={EDIT_CONFIGS.Experience.model}
-              id={experiences[0].id}
-              fields={EDIT_CONFIGS.Experience.fields}
+              model={EDIT_CONFIGS.Trip.model}
+              id={first.id}
+              fields={EDIT_CONFIGS.Trip.fields}
               values={{
-                title: experiences[0].title,
-                description: experiences[0].description,
-                priceFrom: experiences[0].priceFrom,
-                coverImage: experiences[0].images[0],
-                location: experiences[0].location,
+                title: first.title,
+                description: first.description,
+                priceFrom: first.priceFrom,
+                coverImage: first.coverImage,
+                location: first.location,
               }}
-              label={experiences[0].title}
+              label={first.title}
             >
               <EditorialTile
-                href={`/experience/${experiences[0].slug}`}
-                image={experiences[0].images[0]}
-                alt={experiences[0].title}
-                tag={experiences[0].tags[0]}
-                title={experiences[0].title}
-                subtitle={experiences[0].duration}
-                className="sm:col-span-2 lg:col-span-7 lg:row-span-2"
+                href={`/experience/${first.slug}`}
+                image={first.coverImage}
+                alt={first.title}
+                tag={JSON.parse(first.tags || "[]")[0] ?? ""}
+                title={first.title}
+                subtitle={first.duration}
+                className="h-full aspect-[3/4] sm:aspect-[4/5]"
                 priority
-                sizes="(min-width: 1024px) 58vw, (min-width: 640px) 100vw, 100vw"
+                sizes="(min-width: 768px) 33vw, (min-width: 640px) 50vw, 100vw"
               />
             </AdminEditOverlay>
+          )}
+          {second && (
             <AdminEditOverlay
-              model={EDIT_CONFIGS.Experience.model}
-              id={experiences[1].id}
-              fields={EDIT_CONFIGS.Experience.fields}
+              model={EDIT_CONFIGS.Trip.model}
+              id={second.id}
+              fields={EDIT_CONFIGS.Trip.fields}
               values={{
-                title: experiences[1].title,
-                description: experiences[1].description,
-                priceFrom: experiences[1].priceFrom,
-                coverImage: experiences[1].images[0],
-                location: experiences[1].location,
+                title: second.title,
+                description: second.description,
+                priceFrom: second.priceFrom,
+                coverImage: second.coverImage,
+                location: second.location,
               }}
-              label={experiences[1].title}
+              label={second.title}
             >
               <EditorialTile
-                href={`/experience/${experiences[1].slug}`}
-                image={experiences[1].images[0]}
-                alt={experiences[1].title}
-                tag={experiences[1].tags[0]}
-                title={experiences[1].title}
-                subtitle={experiences[1].duration}
-                className="lg:col-span-5"
-                sizes="(min-width: 1024px) 42vw, 100vw"
+                href={`/experience/${second.slug}`}
+                image={second.coverImage}
+                alt={second.title}
+                tag={JSON.parse(second.tags || "[]")[0] ?? ""}
+                title={second.title}
+                subtitle={second.duration}
+                className="h-full aspect-[3/4] sm:aspect-[4/5]"
+                sizes="(min-width: 768px) 33vw, (min-width: 640px) 50vw, 100vw"
               />
             </AdminEditOverlay>
+          )}
+          {third && (
             <AdminEditOverlay
-              model={EDIT_CONFIGS.Experience.model}
-              id={experiences[2].id}
-              fields={EDIT_CONFIGS.Experience.fields}
+              model={EDIT_CONFIGS.Trip.model}
+              id={third.id}
+              fields={EDIT_CONFIGS.Trip.fields}
               values={{
-                title: experiences[2].title,
-                description: experiences[2].description,
-                priceFrom: experiences[2].priceFrom,
-                coverImage: experiences[2].images[0],
-                location: experiences[2].location,
+                title: third.title,
+                description: third.description,
+                priceFrom: third.priceFrom,
+                coverImage: third.coverImage,
+                location: third.location,
               }}
-              label={experiences[2].title}
+              label={third.title}
             >
               <EditorialTile
-                href={`/experience/${experiences[2].slug}`}
-                image={experiences[2].images[0]}
-                alt={experiences[2].title}
-                tag={experiences[2].tags[0]}
-                title={experiences[2].title}
-                subtitle={experiences[2].duration}
-                className="lg:col-span-5"
-                sizes="(min-width: 1024px) 42vw, 100vw"
+                href={`/experience/${third.slug}`}
+                image={third.coverImage}
+                alt={third.title}
+                tag={JSON.parse(third.tags || "[]")[0] ?? ""}
+                title={third.title}
+                subtitle={third.duration}
+                className="h-full aspect-[3/4] sm:aspect-[4/5]"
+                sizes="(min-width: 768px) 33vw, (min-width: 640px) 50vw, 100vw"
               />
             </AdminEditOverlay>
-          </div>
-        </Reveal>
+          )}
+        </div>
       </div>
     </section>
   );
