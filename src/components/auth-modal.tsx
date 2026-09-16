@@ -76,7 +76,7 @@ export function AuthModal({
   }
 
   function handleGoogleClick() {
-    alert("Google sign-in coming soon");
+    window.location.href = "/api/auth/google";
   }
 
   const inputClasses =

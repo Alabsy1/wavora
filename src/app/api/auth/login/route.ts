@@ -53,8 +53,10 @@ export async function POST(request: NextRequest) {
     });
 
     return response;
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Customer login error:", error);
-    return NextResponse.json({ error: "Failed to log in" }, { status: 500 });
+    const message =
+      error instanceof Error ? error.message : "Failed to log in";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
