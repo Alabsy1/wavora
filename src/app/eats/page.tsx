@@ -1,16 +1,19 @@
-"use client";
-
+import { prisma } from "@/lib/prisma";
 import { PageHero } from "@/components/page-hero";
 import { SectionHeading } from "@/components/section-heading";
-import { ImageCard } from "@/components/image-card";
 import { CtaSection } from "@/components/cta-section";
 import { Marquee } from "@/components/marquee";
 import { StaggerGroup, StaggerItem } from "@/components/reveal";
-import { eats } from "@/data/eats";
 import { AdminEditOverlay } from "@/components/admin/admin-edit-overlay";
 import { EDIT_CONFIGS } from "@/lib/edit-configs";
+import { ImageCard } from "@/components/image-card";
 
-export default function EatsPage() {
+export default async function EatsPage() {
+  const eats = await prisma.spot.findMany({
+    where: { visible: true, category: "eats" },
+    orderBy: { order: "asc" },
+  });
+
   return (
     <>
       <PageHero
@@ -29,33 +32,36 @@ export default function EatsPage() {
           description="Just the tables we keep going back to — from first coffee to last drink."
         />
         <StaggerGroup className="mt-12 grid grid-cols-1 gap-x-7 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
-          {eats.map((eat, i) => (
-            <StaggerItem key={eat.id}>
-              <AdminEditOverlay
-                model="Spot"
-                id={eat.id}
-                fields={EDIT_CONFIGS.Spot.fields}
-                values={{
-                  title: eat.title,
-                  description: eat.description,
-                  coverImage: eat.images[0],
-                  location: eat.location,
-                }}
-                label={eat.title}
-              >
-                <ImageCard
-                  href={`/eat/${eat.id}`}
-                  image={eat.images[0]}
-                  alt={eat.title}
-                  tag={eat.type}
-                  title={eat.title}
-                  location={eat.location}
-                  aspect="square"
-                  priority={i < 3}
-                />
-              </AdminEditOverlay>
-            </StaggerItem>
-          ))}
+          {eats.map((eat, i) => {
+            const images = JSON.parse(eat.gallery || "[]");
+            return (
+              <StaggerItem key={eat.id}>
+                <AdminEditOverlay
+                  model={EDIT_CONFIGS.Spot.model}
+                  id={eat.id}
+                  fields={EDIT_CONFIGS.Spot.fields}
+                  values={{
+                    title: eat.title,
+                    description: eat.description,
+                    coverImage: images[0],
+                    location: eat.location,
+                  }}
+                  label={eat.title}
+                >
+                  <ImageCard
+                    href={`/eat/${eat.id}`}
+                    image={images[0]}
+                    alt={eat.title}
+                    tag={eat.tags ? JSON.parse(eat.tags)[0] ?? "" : ""}
+                    title={eat.title}
+                    location={eat.location}
+                    aspect="square"
+                    priority={i < 3}
+                  />
+                </AdminEditOverlay>
+              </StaggerItem>
+            );
+          })}
         </StaggerGroup>
       </section>
 

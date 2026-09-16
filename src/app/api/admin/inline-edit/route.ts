@@ -60,7 +60,7 @@ function getModel(modelName: string): PrismaModel | null {
 
 export async function PATCH(request: NextRequest) {
   try {
-    await requireAdmin();
+    const session = await requireAdmin();
     const { model, id, data } = await request.json();
 
     if (!model || !id || !data || typeof data !== "object") {
@@ -97,7 +97,13 @@ export async function PATCH(request: NextRequest) {
       } else if (intFields.includes(key)) {
         updateData[key] = parseInt(String(value), 10) || 0;
       } else if (boolFields.includes(key)) {
-        updateData[key] = Boolean(value);
+        if (typeof value === "boolean") {
+          updateData[key] = value;
+        } else if (typeof value === "string") {
+          updateData[key] = value.toLowerCase() === "true" || value === "1";
+        } else {
+          updateData[key] = Boolean(value);
+        }
       } else {
         updateData[key] = value;
       }
@@ -108,7 +114,6 @@ export async function PATCH(request: NextRequest) {
       data: updateData,
     });
 
-    const session = await requireAdmin().catch(() => null);
     const fieldNames = Object.keys(data).join(", ");
     const itemName = existing.title ?? existing.name ?? existing.id ?? id;
 
@@ -118,7 +123,7 @@ export async function PATCH(request: NextRequest) {
         model,
         itemId: id,
         itemName: String(itemName),
-        adminEmail: session?.email ?? "unknown",
+        adminEmail: session.email,
         details: `Updated ${fieldNames} on ${model}`,
       },
     }).catch(() => {});

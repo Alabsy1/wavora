@@ -47,6 +47,7 @@ export async function AdventureSection() {
                 priceFrom: first.priceFrom,
                 coverImage: first.coverImage,
                 location: first.location,
+                duration: first.duration,
               }}
               label={first.title}
             >
@@ -74,6 +75,7 @@ export async function AdventureSection() {
                 priceFrom: second.priceFrom,
                 coverImage: second.coverImage,
                 location: second.location,
+                duration: second.duration,
               }}
               label={second.title}
             >
@@ -100,6 +102,7 @@ export async function AdventureSection() {
                 priceFrom: third.priceFrom,
                 coverImage: third.coverImage,
                 location: third.location,
+                duration: third.duration,
               }}
               label={third.title}
             >

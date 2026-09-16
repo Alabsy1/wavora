@@ -1,16 +1,32 @@
-"use client";
-
+import { prisma } from "@/lib/prisma";
 import { PageHero } from "@/components/page-hero";
 import { SectionHeading } from "@/components/section-heading";
-import { StayCard } from "@/components/stay-card";
 import { CtaSection } from "@/components/cta-section";
 import { Marquee } from "@/components/marquee";
 import { StaggerGroup, StaggerItem } from "@/components/reveal";
-import { stays } from "@/data/stays";
 import { AdminEditOverlay } from "@/components/admin/admin-edit-overlay";
 import { EDIT_CONFIGS } from "@/lib/edit-configs";
+import { StayCard } from "@/components/stay-card";
+import type { Stay } from "@/types";
 
-export default function StaysPage() {
+export default async function StaysPage() {
+  const rows = await prisma.stay.findMany({
+    where: { visible: true },
+    orderBy: { order: "asc" },
+  });
+
+  const items: Stay[] = rows.map((s) => ({
+    id: s.id,
+    title: s.title,
+    type: s.category as Stay["type"],
+    location: s.location,
+    description: s.description,
+    images: JSON.parse(s.gallery || "[]"),
+    amenities: JSON.parse(s.amenities || "[]"),
+    priceFrom: s.priceFrom,
+    featured: s.featured,
+  }));
+
   return (
     <>
       <PageHero
@@ -29,10 +45,10 @@ export default function StaysPage() {
           description="Chosen for light, calm and character. Every stay is a real recommendation — prices shown are demo placeholders until live data lands."
         />
         <StaggerGroup className="mt-12 grid grid-cols-1 gap-x-7 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
-          {stays.map((stay, i) => (
+          {items.map((stay, i) => (
             <StaggerItem key={stay.id}>
               <AdminEditOverlay
-                model="Stay"
+                model={EDIT_CONFIGS.Stay.model}
                 id={stay.id}
                 fields={EDIT_CONFIGS.Stay.fields}
                 values={{

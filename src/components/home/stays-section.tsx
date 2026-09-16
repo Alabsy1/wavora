@@ -1,14 +1,31 @@
-"use client";
-
-import { getFeaturedStays } from "@/data/stays";
+import { prisma } from "@/lib/prisma";
 import { SectionHeading } from "@/components/section-heading";
 import { StayCard } from "@/components/stay-card";
 import { StaggerGroup, StaggerItem } from "@/components/reveal";
 import { AdminEditOverlay } from "@/components/admin/admin-edit-overlay";
 import { EDIT_CONFIGS } from "@/lib/edit-configs";
+import type { Stay } from "@/types";
 
-export function StaysSection() {
-  const featured = getFeaturedStays();
+export async function StaysSection() {
+  const rows = await prisma.stay.findMany({
+    where: { visible: true, featured: true },
+    orderBy: { order: "asc" },
+    take: 3,
+  });
+
+  const featured: Stay[] = rows.map((s) => ({
+    id: s.id,
+    title: s.title,
+    type: s.category as Stay["type"],
+    location: s.location,
+    description: s.description,
+    images: JSON.parse(s.gallery || "[]"),
+    amenities: JSON.parse(s.amenities || "[]"),
+    priceFrom: s.priceFrom,
+    featured: s.featured,
+  }));
+
+  if (featured.length === 0) return null;
 
   return (
     <section className="container-w py-20 sm:py-28" aria-label="Places to stay">

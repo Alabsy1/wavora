@@ -1,5 +1,4 @@
-"use client";
-
+import { prisma } from "@/lib/prisma";
 import { SectionHeading } from "@/components/section-heading";
 import { ImageCard } from "@/components/image-card";
 import { Reveal } from "@/components/reveal";
@@ -11,7 +10,17 @@ interface LocalGuideSectionProps {
   showEats: boolean;
 }
 
-export function LocalGuideSection({ showSpots, showEats }: LocalGuideSectionProps) {
+export async function LocalGuideSection({ showSpots, showEats }: LocalGuideSectionProps) {
+  const spotRows = showSpots
+    ? await prisma.spot.findMany({ where: { visible: true }, orderBy: { order: "asc" }, take: 3 })
+    : [];
+  const eatRows = showEats
+    ? await prisma.spot.findMany({ where: { visible: true, category: "eats" }, orderBy: { order: "asc" }, take: 2 })
+    : [];
+
+  const spotItems = spotRows.map((s) => ({ ...s, images: JSON.parse(s.gallery || "[]") as string[] }));
+  const eatItems = eatRows.map((s) => ({ ...s, images: JSON.parse(s.gallery || "[]") as string[] }));
+
   const favorites = [
     showEats && "Cafés",
     showSpots && "Beaches",
@@ -68,52 +77,52 @@ export function LocalGuideSection({ showSpots, showEats }: LocalGuideSectionProp
         <Reveal delay={0.12}>
           <div className="grid grid-cols-2 gap-5 lg:gap-6">
             <div className="flex flex-col gap-5 lg:gap-6 lg:translate-y-8">
-              {showEats && (
+              {showEats && eatItems[0] && (
                 <AdminEditOverlay
                   model={EDIT_CONFIGS.Spot.model}
-                  id="boho-coffee-corner"
+                  id={eatItems[0].id}
                   fields={EDIT_CONFIGS.Spot.fields}
                   values={{
-                    title: "Boho Coffee Corner",
-                    description: "A warm café interior in Hurghada",
-                    coverImage: "/images/eats-cafe.jpg",
-                    location: "Downtown",
+                    title: eatItems[0].title,
+                    description: eatItems[0].description,
+                    coverImage: eatItems[0].images[0],
+                    location: eatItems[0].location,
                   }}
-                  label="Boho Coffee Corner"
+                  label={eatItems[0].title}
                 >
                   <ImageCard
                     href="/eats"
-                    image="/images/eats-cafe.jpg"
-                    alt="A warm café interior in Hurghada"
-                    tag="Café"
-                    title="Boho Coffee Corner"
-                    location="Downtown"
+                    image={eatItems[0].images[0]}
+                    alt={eatItems[0].title}
+                    tag={eatItems[0].tags ? JSON.parse(eatItems[0].tags)[0] ?? "" : ""}
+                    title={eatItems[0].title}
+                    location={eatItems[0].location}
                     aspect="portrait"
                     dark
                     priority
                   />
                 </AdminEditOverlay>
               )}
-              {showSpots && (
+              {showSpots && spotItems[0] && (
                 <AdminEditOverlay
                   model={EDIT_CONFIGS.Spot.model}
-                  id="sunset-point"
+                  id={spotItems[0].id}
                   fields={EDIT_CONFIGS.Spot.fields}
                   values={{
-                    title: "Sunset Point",
-                    description: "Silhouette of a person watching a sunset",
-                    coverImage: "/images/sunset-silhouette.jpg",
-                    location: "Marina promenade",
+                    title: spotItems[0].title,
+                    description: spotItems[0].description,
+                    coverImage: spotItems[0].images[0],
+                    location: spotItems[0].location,
                   }}
-                  label="Sunset Point"
+                  label={spotItems[0].title}
                 >
                   <ImageCard
                     href="/spots"
-                    image="/images/sunset-silhouette.jpg"
-                    alt="Silhouette of a person watching a sunset"
-                    tag="Sunset"
-                    title="Sunset Point"
-                    location="Marina promenade"
+                    image={spotItems[0].images[0]}
+                    alt={spotItems[0].title}
+                    tag={spotItems[0].tags ? JSON.parse(spotItems[0].tags)[0] ?? "" : ""}
+                    title={spotItems[0].title}
+                    location={spotItems[0].location}
                     aspect="portrait"
                     dark
                   />
@@ -121,51 +130,51 @@ export function LocalGuideSection({ showSpots, showEats }: LocalGuideSectionProp
               )}
             </div>
             <div className="flex flex-col gap-5 lg:gap-6">
-              {showSpots && (
+              {showSpots && spotItems[1] && (
                 <AdminEditOverlay
                   model={EDIT_CONFIGS.Spot.model}
-                  id="hidden-coral-bay"
+                  id={spotItems[1].id}
                   fields={EDIT_CONFIGS.Spot.fields}
                   values={{
-                    title: "Hidden Coral Bay",
-                    description: "Sea turtle swimming above a coral reef",
-                    coverImage: "/images/sea-turtle-dive.jpg",
-                    location: "South of Hurghada",
+                    title: spotItems[1].title,
+                    description: spotItems[1].description,
+                    coverImage: spotItems[1].images[0],
+                    location: spotItems[1].location,
                   }}
-                  label="Hidden Coral Bay"
+                  label={spotItems[1].title}
                 >
                   <ImageCard
                     href="/spots"
-                    image="/images/sea-turtle-dive.jpg"
-                    alt="Sea turtle swimming above a coral reef"
-                    tag="Hidden gem"
-                    title="Hidden Coral Bay"
-                    location="South of Hurghada"
+                    image={spotItems[1].images[0]}
+                    alt={spotItems[1].title}
+                    tag={spotItems[1].tags ? JSON.parse(spotItems[1].tags)[0] ?? "" : ""}
+                    title={spotItems[1].title}
+                    location={spotItems[1].location}
                     aspect="portrait"
                     dark
                   />
                 </AdminEditOverlay>
               )}
-              {showEats && (
+              {showEats && eatItems[1] && (
                 <AdminEditOverlay
                   model={EDIT_CONFIGS.Spot.model}
-                  id="rooftop-dinner-spot"
+                  id={eatItems[1].id}
                   fields={EDIT_CONFIGS.Spot.fields}
                   values={{
-                    title: "Rooftop Dinner Spot",
-                    description: "Romantic rooftop dinner table by the sea",
-                    coverImage: "/images/eats-romantic.jpg",
-                    location: "Marina",
+                    title: eatItems[1].title,
+                    description: eatItems[1].description,
+                    coverImage: eatItems[1].images[0],
+                    location: eatItems[1].location,
                   }}
-                  label="Rooftop Dinner Spot"
+                  label={eatItems[1].title}
                 >
                   <ImageCard
                     href="/eats"
-                    image="/images/eats-romantic.jpg"
-                    alt="Romantic rooftop dinner table by the sea"
-                    tag="Dinner"
-                    title="Rooftop Dinner Spot"
-                    location="Marina"
+                    image={eatItems[1].images[0]}
+                    alt={eatItems[1].title}
+                    tag={eatItems[1].tags ? JSON.parse(eatItems[1].tags)[0] ?? "" : ""}
+                    title={eatItems[1].title}
+                    location={eatItems[1].location}
                     aspect="portrait"
                     dark
                   />

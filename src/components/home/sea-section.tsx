@@ -1,14 +1,34 @@
-"use client";
-
-import { getExperiencesByCategory } from "@/data/experiences";
+import { prisma } from "@/lib/prisma";
 import { SectionHeading } from "@/components/section-heading";
 import { HorizontalScroller } from "@/components/horizontal-scroller";
 import { ExperienceCard } from "@/components/experience-card";
 import { AdminEditOverlay } from "@/components/admin/admin-edit-overlay";
 import { EDIT_CONFIGS } from "@/lib/edit-configs";
+import type { Experience } from "@/types";
 
-export function SeaSection() {
-  const experiences = getExperiencesByCategory("sea");
+export async function SeaSection() {
+  const rows = await prisma.experience.findMany({
+    where: { visible: true, category: "sea" },
+    orderBy: { order: "asc" },
+    take: 6,
+  });
+
+  const experiences: Experience[] = rows.map((e) => ({
+    id: e.id,
+    slug: e.slug,
+    title: e.title,
+    category: "sea" as const,
+    location: e.location,
+    description: e.description,
+    images: JSON.parse(e.gallery || "[]"),
+    duration: e.duration,
+    tags: JSON.parse(e.tags || "[]"),
+    priceFrom: e.priceFrom,
+    priceNote: e.priceNote,
+    featured: e.featured,
+  }));
+
+  if (experiences.length === 0) return null;
 
   return (
     <section
