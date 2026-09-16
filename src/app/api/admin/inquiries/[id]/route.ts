@@ -42,7 +42,8 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
     const { id } = await params;
     await prisma.inquiry.delete({ where: { id } });
     return NextResponse.json({ success: true });
-  } catch {
+  } catch (error) {
+    console.error("Inquiry DELETE error:", error);
     return NextResponse.json({ error: "Failed to delete" }, { status: 500 });
   }
 }

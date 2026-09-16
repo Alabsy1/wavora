@@ -4,10 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npx prisma generate && next build",
+    "build": "prisma migrate deploy && prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
-    "postinstall": "npx prisma generate || exit 0"
+    "postinstall": "prisma generate || exit 0"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",

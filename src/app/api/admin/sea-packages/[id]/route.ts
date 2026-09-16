@@ -18,6 +18,9 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
   try {
     await requireAdmin();
     const { id } = await params;
+    const existing = await prisma.seaPackage.findUnique({ where: { id } });
+    if (!existing) return NextResponse.json({ error: "SeaPackage not found" }, { status: 404 });
+
     const body = await request.json();
     const {
       title, slug, description, duration, boatType, maxGuests, priceFrom,
@@ -61,7 +64,8 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
     const { id } = await params;
     await prisma.seaPackage.delete({ where: { id } });
     return NextResponse.json({ success: true });
-  } catch {
+  } catch (error) {
+    console.error("SeaPackage DELETE error:", error);
     return NextResponse.json({ error: "Failed to delete" }, { status: 500 });
   }
 }

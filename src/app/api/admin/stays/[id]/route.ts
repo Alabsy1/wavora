@@ -18,6 +18,9 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
   try {
     await requireAdmin();
     const { id } = await params;
+    const existing = await prisma.stay.findUnique({ where: { id } });
+    if (!existing) return NextResponse.json({ error: "Stay not found" }, { status: 404 });
+
     const body = await request.json();
     const { title, slug, description, location, category, coverImage, gallery, priceFrom, priceNote, amenities, tags, featured, visible, order } = body;
 
@@ -54,7 +57,8 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
     const { id } = await params;
     await prisma.stay.delete({ where: { id } });
     return NextResponse.json({ success: true });
-  } catch {
+  } catch (error) {
+    console.error("Stay DELETE error:", error);
     return NextResponse.json({ error: "Failed to delete" }, { status: 500 });
   }
 }
