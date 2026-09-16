@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth";
 
@@ -62,6 +63,9 @@ export async function PUT(
       },
     });
 
+    revalidatePath("/experiences");
+    revalidatePath("/");
+
     return NextResponse.json(experience);
   } catch (error) {
     console.error("Experience PUT error:", error);
@@ -77,6 +81,10 @@ export async function DELETE(
     await requireAdmin();
     const { id } = await params;
     await prisma.experience.delete({ where: { id } });
+
+    revalidatePath("/experiences");
+    revalidatePath("/");
+
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Experience DELETE error:", error);

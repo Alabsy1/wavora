@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth";
 
@@ -66,6 +67,9 @@ export async function PUT(
       },
     });
 
+    revalidatePath("/adventures");
+    revalidatePath("/");
+
     return NextResponse.json(trip);
   } catch (error) {
     console.error("Trip PUT error:", error);
@@ -81,6 +85,10 @@ export async function DELETE(
     await requireAdmin();
     const { id } = await params;
     await prisma.trip.delete({ where: { id } });
+
+    revalidatePath("/adventures");
+    revalidatePath("/");
+
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Trip DELETE error:", error);

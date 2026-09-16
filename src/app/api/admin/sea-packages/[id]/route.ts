@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth";
 
@@ -51,6 +52,9 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       },
     });
 
+    revalidatePath("/sea");
+    revalidatePath("/");
+
     return NextResponse.json(pkg);
   } catch (error) {
     console.error("SeaPackage PUT error:", error);
@@ -63,6 +67,10 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
     await requireAdmin();
     const { id } = await params;
     await prisma.seaPackage.delete({ where: { id } });
+
+    revalidatePath("/sea");
+    revalidatePath("/");
+
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("SeaPackage DELETE error:", error);

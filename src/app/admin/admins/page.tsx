@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Users, Plus, Trash2, X } from "lucide-react";
+import { Users, Plus, Pencil, Trash2, X } from "lucide-react";
 
 interface AdminUser {
   id: string;
@@ -17,6 +17,7 @@ export default function AdminsPage() {
   const [form, setForm] = useState({ email: "", name: "", password: "" });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [editing, setEditing] = useState<AdminUser | null>(null);
 
   async function loadAdmins() {
     try {
@@ -32,26 +33,45 @@ export default function AdminsPage() {
 
   useEffect(() => { loadAdmins(); }, []);
 
-  async function handleCreate(e: React.FormEvent) {
+  function openEdit(admin: AdminUser) {
+    setEditing(admin);
+    setForm({ name: admin.name, email: admin.email, password: "" });
+    setShowModal(true);
+  }
+
+  function closeModal() {
+    setShowModal(false);
+    setEditing(null);
+    setForm({ email: "", name: "", password: "" });
+    setError("");
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
     setError("");
     try {
-      const res = await fetch("/api/admin/admins", {
-        method: "POST",
+      const isEdit = editing !== null;
+      const url = isEdit ? `/api/admin/admins/${editing.id}` : "/api/admin/admins";
+      const method = isEdit ? "PUT" : "POST";
+      const res = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error || "Failed to create admin");
+        setError(data.error || `Failed to ${isEdit ? "update" : "create"} admin`);
         return;
       }
-      setAdmins((prev) => [...prev, data]);
-      setForm({ email: "", name: "", password: "" });
-      setShowModal(false);
+      if (isEdit) {
+        setAdmins((prev) => prev.map((a) => (a.id === editing.id ? data : a)));
+      } else {
+        setAdmins((prev) => [...prev, data]);
+      }
+      closeModal();
     } catch {
-      setError("Failed to create admin");
+      setError(editing ? "Failed to update admin" : "Failed to create admin");
     } finally {
       setSaving(false);
     }
@@ -92,7 +112,7 @@ export default function AdminsPage() {
           </p>
         </div>
         <button
-          onClick={() => { setShowModal(true); setError(""); }}
+          onClick={() => { setEditing(null); setForm({ email: "", name: "", password: "" }); setShowModal(true); setError(""); }}
           className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-teal-500 to-teal-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-teal-500/25 transition-all hover:from-teal-600 hover:to-teal-700"
         >
           <Plus className="h-4 w-4" />
@@ -143,13 +163,22 @@ export default function AdminsPage() {
                       {new Date(admin.createdAt).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <button
-                        onClick={() => handleDelete(admin.id)}
-                        className="inline-flex size-8 items-center justify-center rounded-lg text-neutral-400 transition-colors hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-500/10 dark:hover:text-red-400"
-                        title="Delete admin"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
+                      <div className="inline-flex gap-1">
+                        <button
+                          onClick={() => openEdit(admin)}
+                          className="inline-flex size-8 items-center justify-center rounded-lg text-neutral-400 transition-colors hover:bg-teal-50 hover:text-teal-600 dark:hover:bg-teal-500/10 dark:hover:text-teal-400"
+                          title="Edit admin"
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(admin.id)}
+                          className="inline-flex size-8 items-center justify-center rounded-lg text-neutral-400 transition-colors hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-500/10 dark:hover:text-red-400"
+                          title="Delete admin"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -161,19 +190,19 @@ export default function AdminsPage() {
 
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setShowModal(false)} />
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={closeModal} />
           <div className="relative w-full max-w-md rounded-2xl border border-neutral-200 bg-white p-6 shadow-2xl dark:border-neutral-700 dark:bg-neutral-900">
             <button
-              onClick={() => setShowModal(false)}
+              onClick={closeModal}
               className="absolute right-4 top-4 inline-flex size-8 items-center justify-center rounded-lg text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800"
             >
               <X className="h-4 w-4" />
             </button>
-            <h3 className="text-lg font-bold text-neutral-900 dark:text-white">Add New Admin</h3>
+            <h3 className="text-lg font-bold text-neutral-900 dark:text-white">{editing ? "Edit Admin" : "Add New Admin"}</h3>
             <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
-              Create a new admin account with dashboard access.
+              {editing ? "Update admin account details." : "Create a new admin account with dashboard access."}
             </p>
-            <form onSubmit={handleCreate} className="mt-6 space-y-4">
+            <form onSubmit={handleSubmit} className="mt-6 space-y-4">
               {error && (
                 <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600 dark:bg-red-500/10 dark:text-red-400">
                   {error}
@@ -205,18 +234,18 @@ export default function AdminsPage() {
                 <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Password</label>
                 <input
                   type="password"
-                  required
-                  minLength={6}
+                  required={!editing}
+                  minLength={editing ? 0 : 6}
                   value={form.password}
                   onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
                   className="mt-1 block w-full rounded-lg border border-neutral-300 bg-white px-4 py-2.5 text-sm text-neutral-900 outline-none transition-colors focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 dark:border-neutral-600 dark:bg-neutral-800 dark:text-white"
-                  placeholder="Min. 6 characters"
+                  placeholder={editing ? "Leave blank to keep current" : "Min. 6 characters"}
                 />
               </div>
               <div className="flex justify-end gap-3 pt-2">
                 <button
                   type="button"
-                  onClick={() => setShowModal(false)}
+                  onClick={closeModal}
                   className="rounded-lg px-4 py-2.5 text-sm font-medium text-neutral-600 transition-colors hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800"
                 >
                   Cancel
@@ -229,10 +258,10 @@ export default function AdminsPage() {
                   {saving ? (
                     <span className="inline-flex items-center gap-2">
                       <span className="size-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                      Creating...
+                      {editing ? "Updating..." : "Creating..."}
                     </span>
                   ) : (
-                    "Create Admin"
+                    editing ? "Update Admin" : "Create Admin"
                   )}
                 </button>
               </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { MessageSquare, ExternalLink, Trash2, RefreshCw } from "lucide-react";
+import { MessageSquare, ExternalLink, Trash2, RefreshCw, StickyNote, Save, X } from "lucide-react";
 
 interface Inquiry {
   id: string;
@@ -31,13 +31,20 @@ export default function InquiriesPage() {
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState<string | null>(null);
+  const [notesMap, setNotesMap] = useState<Record<string, string>>({});
+  const [editingNotes, setEditingNotes] = useState<string | null>(null);
+  const [notesDraft, setNotesDraft] = useState("");
 
   async function load() {
     setLoading(true);
     try {
       const res = await fetch("/api/inquiries");
       const data = await res.json();
-      setInquiries(Array.isArray(data) ? data : []);
+      const list = Array.isArray(data) ? data : [];
+      setInquiries(list);
+      const map: Record<string, string> = {};
+      list.forEach((inq: Inquiry) => { map[inq.id] = inq.notes || ""; });
+      setNotesMap(map);
     } catch {
       console.error("Failed to load inquiries");
     } finally {
@@ -73,10 +80,39 @@ export default function InquiriesPage() {
     }
   }
 
+  async function saveNotes(id: string) {
+    try {
+      await fetch(`/api/admin/inquiries/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ notes: notesDraft }),
+      });
+      setNotesMap((prev) => ({ ...prev, [id]: notesDraft }));
+      setEditingNotes(null);
+    } catch {
+      console.error("Failed to save notes");
+    }
+  }
+
+  function startEditingNotes(id: string) {
+    setEditingNotes(id);
+    setNotesDraft(notesMap[id] || "");
+  }
+
   function openWhatsApp(inquiry: Inquiry) {
     const number = inquiry.whatsapp.replace(/[^0-9]/g, "");
-    const tripInfo = inquiry.tripTitle ? `\n*Trip:* ${inquiry.tripTitle}` : inquiry.tripType ? `\n*Type:* ${inquiry.tripType}` : "";
-    const message = `Hi ${inquiry.fullName}! Thank you for your inquiry.\n\n*Trip:* ${inquiry.tripTitle || inquiry.tripType || "TBD"}\n*Date:* ${inquiry.date}\n*Guests:* ${inquiry.adults} adults${inquiry.kids ? `, ${inquiry.kids} kids` : ""}${inquiry.notes ? `\n*Notes:* ${inquiry.notes}` : ""}\n\nWe'd love to help you plan your perfect day!\n\n(Inquiry: ${inquiry.id})`;
+    const parts = [
+      `Hi ${inquiry.fullName}! Thank you for your inquiry.`,
+      "",
+      `*Trip:* ${inquiry.tripTitle || inquiry.tripType || "TBD"}`,
+      `*Date:* ${inquiry.date}`,
+      `*Guests:* ${inquiry.adults} adults${inquiry.kids ? `, ${inquiry.kids} kids` : ""}`,
+    ];
+    if (inquiry.notes) parts.push(`*Notes:* ${inquiry.notes}`);
+    const adminNotes = notesMap[inquiry.id];
+    if (adminNotes) parts.push(`*Admin Notes:* ${adminNotes}`);
+    parts.push("", "We'd love to help you plan your perfect day!", "", `(Inquiry: ${inquiry.id})`);
+    const message = parts.join("\n");
     window.open(`https://wa.me/${number}?text=${encodeURIComponent(message)}`, "_blank");
   }
 
@@ -140,6 +176,7 @@ export default function InquiriesPage() {
                   <th className="px-4 py-3 font-semibold text-neutral-600 dark:text-neutral-400">Date</th>
                   <th className="px-4 py-3 font-semibold text-neutral-600 dark:text-neutral-400">Package</th>
                   <th className="px-4 py-3 font-semibold text-neutral-600 dark:text-neutral-400">Guests</th>
+                  <th className="px-4 py-3 font-semibold text-neutral-600 dark:text-neutral-400">Notes</th>
                   <th className="px-4 py-3 font-semibold text-neutral-600 dark:text-neutral-400">Status</th>
                   <th className="px-4 py-3 font-semibold text-neutral-600 dark:text-neutral-400">Created</th>
                   <th className="px-4 py-3 font-semibold text-neutral-600 dark:text-neutral-400">Actions</th>
@@ -157,6 +194,36 @@ export default function InquiriesPage() {
                       <span className="text-neutral-700 dark:text-neutral-300">{inq.tripTitle || inq.tripType || "—"}</span>
                     </td>
                     <td className="px-4 py-3 text-neutral-600 dark:text-neutral-400">{inq.adults}A{inq.kids ? `/${inq.kids}K` : ""}</td>
+                    <td className="px-4 py-3">
+                      {editingNotes === inq.id ? (
+                        <div className="flex flex-col gap-1.5">
+                          <textarea
+                            value={notesDraft}
+                            onChange={(e) => setNotesDraft(e.target.value)}
+                            rows={2}
+                            className="w-full rounded-lg border border-neutral-200 bg-white px-2.5 py-1.5 text-xs text-neutral-900 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
+                            placeholder="Add notes..."
+                          />
+                          <div className="flex gap-1">
+                            <button onClick={() => saveNotes(inq.id)} className="inline-flex items-center gap-1 rounded-md bg-teal-600 px-2 py-1 text-xs font-medium text-white hover:bg-teal-700">
+                              <Save className="size-3" /> Save
+                            </button>
+                            <button onClick={() => setEditingNotes(null)} className="inline-flex items-center gap-1 rounded-md bg-neutral-200 px-2 py-1 text-xs font-medium text-neutral-700 hover:bg-neutral-300 dark:bg-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-600">
+                              <X className="size-3" />
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => startEditingNotes(inq.id)}
+                          className={`inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs transition-colors hover:bg-neutral-100 dark:hover:bg-neutral-800 ${notesMap[inq.id] ? "text-teal-600 dark:text-teal-400" : "text-neutral-400 dark:text-neutral-500"}`}
+                          title={notesMap[inq.id] || "Add notes"}
+                        >
+                          <StickyNote className="size-3.5" />
+                          {notesMap[inq.id] && <span className="max-w-[80px] truncate">{notesMap[inq.id]}</span>}
+                        </button>
+                      )}
+                    </td>
                     <td className="px-4 py-3">
                       <select
                         value={inq.status}
