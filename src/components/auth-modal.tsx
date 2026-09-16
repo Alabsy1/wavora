@@ -66,6 +66,11 @@ export function AuthModal({
         return;
       }
 
+      if (data.role === "admin") {
+        window.location.href = "/admin";
+        return;
+      }
+
       onAuth();
       onClose();
     } catch {
