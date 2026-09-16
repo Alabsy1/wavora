@@ -4,10 +4,12 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
-import { MessageCircle, X, LayoutDashboard, LogIn } from "lucide-react";
+import { MessageCircle, X, LayoutDashboard, LogIn, LogOut } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { Logo } from "@/components/logo";
 import { ThemeSwitcher } from "@/components/theme-switcher";
+import { AuthModal } from "@/components/auth-modal";
+import { useAuth } from "@/components/auth-provider";
 import { navItems, siteConfig, whatsappLink } from "@/data/site";
 import { useSiteFlags } from "@/hooks/use-site-flags";
 
@@ -24,9 +26,21 @@ const FLAG_MAP: Record<string, string> = {
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [authModalMode, setAuthModalMode] = useState<"login" | "signup">("login");
+  const { user, role, loading: authLoading, refresh, logout } = useAuth();
+  const isAdmin = role === "admin";
   const pathname = usePathname();
   const { flags } = useSiteFlags();
+
+  function openLogin() {
+    setAuthModalMode("login");
+    setAuthModalOpen(true);
+  }
+  function openSignup() {
+    setAuthModalMode("signup");
+    setAuthModalOpen(true);
+  }
 
   const visibleNavItems = navItems.filter((item) => {
     const flagKey = FLAG_MAP[item.label];
@@ -49,14 +63,6 @@ export function Navbar() {
       };
     }
   }, [open]);
-
-  useEffect(() => {
-    fetch("/api/admin/auth/check")
-      .then((res) => {
-        if (res.ok) setIsAdmin(true);
-      })
-      .catch(() => {});
-  }, []);
 
   const glassy = scrolled && !open;
 
@@ -113,22 +119,48 @@ export function Navbar() {
             >
               <MessageCircle className="size-[0.9375rem]" aria-hidden="true" />
             </a>
-            {isAdmin ? (
-              <Link
-                href="/admin"
-                className="inline-flex h-10 items-center gap-2 rounded-full border border-current/20 px-4 text-[0.8125rem] font-bold tracking-tight text-current opacity-80 transition-all duration-300 hover:bg-pill hover:text-pill-fg hover:opacity-100"
-              >
-                <LayoutDashboard className="h-3.5 w-3.5" />
-                Dashboard
-              </Link>
+            {authLoading ? null : user ? (
+              isAdmin ? (
+                <Link
+                  href="/admin"
+                  className="inline-flex h-10 items-center gap-2 rounded-full border border-current/20 px-4 text-[0.8125rem] font-bold tracking-tight text-current opacity-80 transition-all duration-300 hover:bg-pill hover:text-pill-fg hover:opacity-100"
+                >
+                  <LayoutDashboard className="h-3.5 w-3.5" />
+                  Dashboard
+                </Link>
+              ) : (
+                <>
+                  <span className="text-[0.8125rem] font-semibold tracking-wide opacity-80">
+                    {user.name || user.email}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={logout}
+                    className="inline-flex h-10 items-center gap-2 rounded-full border border-current/20 px-4 text-[0.8125rem] font-bold tracking-tight text-current opacity-60 transition-all duration-300 hover:opacity-100"
+                  >
+                    <LogOut className="h-3.5 w-3.5" />
+                    Log Out
+                  </button>
+                </>
+              )
             ) : (
-              <Link
-                href="/admin/login"
-                className="inline-flex h-10 items-center gap-2 rounded-full border border-current/20 px-4 text-[0.8125rem] font-bold tracking-tight text-current opacity-60 transition-all duration-300 hover:opacity-100"
-              >
-                <LogIn className="h-3.5 w-3.5" />
-                Login
-              </Link>
+              <>
+                <button
+                  type="button"
+                  onClick={openLogin}
+                  className="inline-flex h-10 items-center gap-2 rounded-full border border-current/20 px-4 text-[0.8125rem] font-bold tracking-tight text-current opacity-60 transition-all duration-300 hover:opacity-100"
+                >
+                  <LogIn className="h-3.5 w-3.5" />
+                  Log In
+                </button>
+                <button
+                  type="button"
+                  onClick={openSignup}
+                  className="inline-flex h-10 items-center rounded-full border border-current/20 px-4 text-[0.8125rem] font-bold tracking-tight text-current opacity-80 transition-all duration-300 hover:bg-pill hover:text-pill-fg hover:opacity-100"
+                >
+                  Sign Up
+                </button>
+              </>
             )}
             <Link
               href="/plan"
@@ -215,24 +247,49 @@ export function Navbar() {
                 }}
                 className="mt-6 flex flex-col gap-3"
               >
-                {isAdmin ? (
-                  <Link
-                    href="/admin"
-                    onClick={() => setOpen(false)}
-                    className="inline-flex h-12 items-center justify-center gap-2 rounded-full border border-section-fg/25 px-7 text-[0.9375rem] font-bold tracking-tight text-section-fg"
-                  >
-                    <LayoutDashboard className="h-4 w-4" />
-                    Dashboard
-                  </Link>
+                {authLoading ? null : user ? (
+                  isAdmin ? (
+                    <Link
+                      href="/admin"
+                      onClick={() => setOpen(false)}
+                      className="inline-flex h-12 items-center justify-center gap-2 rounded-full border border-section-fg/25 px-7 text-[0.9375rem] font-bold tracking-tight text-section-fg"
+                    >
+                      <LayoutDashboard className="h-4 w-4" />
+                      Dashboard
+                    </Link>
+                  ) : (
+                    <>
+                      <span className="text-center text-[0.9375rem] font-semibold tracking-wide text-section-fg/80">
+                        {user.name || user.email}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => { logout(); setOpen(false); }}
+                        className="inline-flex h-12 items-center justify-center gap-2 rounded-full border border-section-fg/25 px-7 text-[0.9375rem] font-bold tracking-tight text-section-fg"
+                      >
+                        <LogOut className="h-4 w-4" />
+                        Log Out
+                      </button>
+                    </>
+                  )
                 ) : (
-                  <Link
-                    href="/admin/login"
-                    onClick={() => setOpen(false)}
-                    className="inline-flex h-12 items-center justify-center gap-2 rounded-full border border-section-fg/25 px-7 text-[0.9375rem] font-bold tracking-tight text-section-fg"
-                  >
-                    <LogIn className="h-4 w-4" />
-                    Login
-                  </Link>
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => { openLogin(); setOpen(false); }}
+                      className="inline-flex h-12 items-center justify-center gap-2 rounded-full border border-section-fg/25 px-7 text-[0.9375rem] font-bold tracking-tight text-section-fg"
+                    >
+                      <LogIn className="h-4 w-4" />
+                      Log In
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { openSignup(); setOpen(false); }}
+                      className="inline-flex h-12 items-center justify-center rounded-full border border-section-fg/25 px-7 text-[0.9375rem] font-bold tracking-tight text-section-fg"
+                    >
+                      Sign Up
+                    </button>
+                  </>
                 )}
                 <Link
                   href="/plan"
@@ -273,6 +330,13 @@ export function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <AuthModal
+        open={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        onAuth={refresh}
+        initialMode={authModalMode}
+      />
     </>
   );
 }
