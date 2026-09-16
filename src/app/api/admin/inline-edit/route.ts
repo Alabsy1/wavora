@@ -1,6 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth";
+
+const MODEL_PATHS: Record<string, string[]> = {
+  SeaPackage: ["/sea", "/"],
+  Trip: ["/adventures", "/"],
+  Experience: ["/experiences", "/"],
+  Stay: ["/stays", "/"],
+  Spot: ["/spots", "/eats", "/"],
+  AddOn: [],
+  IslandDestination: ["/sea", "/"],
+};
 
 const JSON_FIELDS: Record<string, string[]> = {
   SeaPackage: ["inclusions", "exclusions", "timeline", "specs", "addOns", "gallery"],
@@ -158,6 +169,12 @@ export async function PATCH(request: NextRequest) {
         details: `Updated ${fieldNames} on ${model}`,
       },
     }).catch((logErr) => console.error("[inline-edit] Activity log error:", logErr));
+
+    const paths = MODEL_PATHS[model] ?? [];
+    for (const p of paths) {
+      revalidatePath(p);
+    }
+    console.log("[inline-edit] Revalidated paths:", paths);
 
     return NextResponse.json({ success: true, record: updated });
   } catch (error) {
