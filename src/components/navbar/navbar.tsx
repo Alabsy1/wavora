@@ -121,13 +121,23 @@ export function Navbar() {
             </a>
             {authLoading ? null : user ? (
               isAdmin ? (
-                <Link
-                  href="/admin"
-                  className="inline-flex h-10 items-center gap-2 rounded-full border border-current/20 px-4 text-[0.8125rem] font-bold tracking-tight text-current opacity-80 transition-all duration-300 hover:bg-pill hover:text-pill-fg hover:opacity-100"
-                >
-                  <LayoutDashboard className="h-3.5 w-3.5" />
-                  Dashboard
-                </Link>
+                <>
+                  <Link
+                    href="/admin"
+                    className="inline-flex h-10 items-center gap-2 rounded-full border border-current/20 px-4 text-[0.8125rem] font-bold tracking-tight text-current opacity-80 transition-all duration-300 hover:bg-pill hover:text-pill-fg hover:opacity-100"
+                  >
+                    <LayoutDashboard className="h-3.5 w-3.5" />
+                    Dashboard
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={logout}
+                    className="inline-flex h-10 items-center gap-2 rounded-full border border-current/20 px-4 text-[0.8125rem] font-bold tracking-tight text-current opacity-60 transition-all duration-300 hover:opacity-100"
+                  >
+                    <LogOut className="h-3.5 w-3.5" />
+                    Log Out
+                  </button>
+                </>
               ) : (
                 <>
                   <span className="text-[0.8125rem] font-semibold tracking-wide opacity-80">
@@ -249,14 +259,24 @@ export function Navbar() {
               >
                 {authLoading ? null : user ? (
                   isAdmin ? (
-                    <Link
-                      href="/admin"
-                      onClick={() => setOpen(false)}
-                      className="inline-flex h-12 items-center justify-center gap-2 rounded-full border border-section-fg/25 px-7 text-[0.9375rem] font-bold tracking-tight text-section-fg"
-                    >
-                      <LayoutDashboard className="h-4 w-4" />
-                      Dashboard
-                    </Link>
+                    <>
+                      <Link
+                        href="/admin"
+                        onClick={() => setOpen(false)}
+                        className="inline-flex h-12 items-center justify-center gap-2 rounded-full border border-section-fg/25 px-7 text-[0.9375rem] font-bold tracking-tight text-section-fg"
+                      >
+                        <LayoutDashboard className="h-4 w-4" />
+                        Dashboard
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={() => { logout(); setOpen(false); }}
+                        className="inline-flex h-12 items-center justify-center gap-2 rounded-full border border-section-fg/25 px-7 text-[0.9375rem] font-bold tracking-tight text-section-fg"
+                      >
+                        <LogOut className="h-4 w-4" />
+                        Log Out
+                      </button>
+                    </>
                   ) : (
                     <>
                       <span className="text-center text-[0.9375rem] font-semibold tracking-wide text-section-fg/80">

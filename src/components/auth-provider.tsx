@@ -69,6 +69,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
     setRole(null);
     document.cookie = "admin-token=; path=/; max-age=0";
+    document.cookie = "customer-token=; path=/; max-age=0";
+    window.location.href = "/";
   }, []);
 
   useEffect(() => {
