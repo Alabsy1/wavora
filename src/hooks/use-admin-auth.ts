@@ -16,10 +16,10 @@ export function useAdminAuth() {
     let cancelled = false;
     async function check() {
       try {
-        const res = await fetch("/api/auth/me", { cache: "no-store" });
+        const res = await fetch("/api/auth/me", { cache: "no-store", credentials: "include" });
         if (!res.ok) return;
         const data = await res.json();
-        if (!cancelled && data.admin) {
+        if (!cancelled && data.user) {
           setAdmin(data.user);
         }
       } catch {
@@ -34,10 +34,10 @@ export function useAdminAuth() {
 
   const refresh = useCallback(async () => {
     try {
-      const res = await fetch("/api/auth/me", { cache: "no-store" });
+      const res = await fetch("/api/auth/me", { cache: "no-store", credentials: "include" });
       if (!res.ok) { setAdmin(null); return; }
       const data = await res.json();
-      if (data.admin) setAdmin(data.user);
+      if (data.user) setAdmin(data.user);
     } catch {
       setAdmin(null);
     }

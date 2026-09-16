@@ -96,6 +96,7 @@ export function InlineEditModal({
       const res = await fetch("/api/admin/inline-edit", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ model, id, data: payload }),
       });
 
